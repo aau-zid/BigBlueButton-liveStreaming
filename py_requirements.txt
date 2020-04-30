@@ -1,0 +1,2 @@
+selenium
+bigbluebutton-api-python
