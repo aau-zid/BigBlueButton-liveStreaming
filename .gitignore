@@ -1,0 +1,4 @@
+.env
+*.yml
+*.code-workspace
+*.iml

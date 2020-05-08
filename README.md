@@ -20,15 +20,20 @@ You need to set some environment variables to run the container.
 
 #### Optional
 * BBB_AS_MODERATOR - if set to "true" the meeting will be joined as moderator
-* BBB_USER_NAME - the Username to join the meeting. (Default: Live)
+* BBB_USER_NAME - the username to join the meeting. (Default: Live)
+
+### Chat options
+* BBB_ENABLE_CHAT - Enable Chat
+* BBB_REDIS_HOST - Set REDIS host (Default: redis)
+* BBB_REDIS_CHANNEL - Set REDIS channel (Default: chat)
+* BBB_CHAT_NAME - the username to join the meeting for chatting. (Default: Chat)
 
 ### Starting liveStreaming
 * wget -O docker-compose.yml https://github.com/aau-zid/BigBlueButton-liveStreaming/raw/master/docker-compose.yml.example
 * (change configuration)
 * docker-compose up -d
-* docker-compose down
+* docker-compose down 
 
 ## Known Limitations
 * You must extract and provide the meetingID, which is not visible within the room.
-* Some unnecessary html elements are not hidden yet.
 * ffmpeg settings to be improved
