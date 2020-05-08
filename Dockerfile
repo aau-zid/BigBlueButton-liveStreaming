@@ -32,8 +32,13 @@ RUN apt-get update && \
 
 ENV BBB_AS_MODERATOR false
 ENV BBB_USER_NAME Live
+ENV BBB_CHAT_NAME Chat
+ENV BBB_ENABLE_CHAT false
+ENV BBB_REDIS_HOST redis
+ENV BBB_REDIS_CHANNEL chat
 
 COPY stream.py ./
+COPY chat.py ./
 COPY startStream.sh ./
 COPY docker-entrypoint.sh ./
 

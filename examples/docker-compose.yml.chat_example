@@ -1,0 +1,30 @@
+version: "3.3"
+services:
+  redis:
+    image: redis
+    networks:
+     - app-tier
+  bbb-streamer:
+    image: aauzid/bigbluebutton-livestreaming
+    environment:
+        # BigBlueButton Server url:
+      - BBB_URL=https://your_BigBlueButton_server/bigbluebutton/api
+      # BigBlueButton secret:
+      - BBB_SECRET=your_secret
+      # BigBlueButton meetingID:
+      - BBB_MEETING_ID=your_meetingID
+      # Media server url:
+      - BBB_STREAM_URL=rtmp://media_server_url/stream/stream_key
+      # Enable chat functionality
+      -BBB_ENABLE_CHAT=true
+      # Set REDIS host (default: 'redis')
+      -BBB_REDIS_HOST=redis
+      # Set REDIS channel to subscribe (default: 'chat')
+      -BBB_REDIS_CHANNEL=chat
+      # Username for the chat (default: 'Chat')
+      -BBB_CHAT_NAME=Chat
+    networks:
+      - app-tier
+networks:
+  app-tier:
+    driver: bridge
