@@ -1,4 +1,5 @@
 .env
+.ds_store
 *.yml
 *.code-workspace
 *.iml
