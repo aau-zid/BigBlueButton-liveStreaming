@@ -42,9 +42,12 @@ You need to set some environment variables to run the container.
 
 Please try to follow best practices for data protection and privacy.
 Take all steps to comply with privacy law principles that prohibit unlawful, opaque and limitless capture and processing of personal data. 
+
 The GDPR (General Data Protection Regulation) provides individual rights to EU citizens in relation to personal Data.
 To find out more about GDPR, please visit the [European Union’s website](https://ec.europa.eu).
+
 The California Consumer Privacy Act (CCPA) provides certain rights to California residents in relation to their personal information. 
+
 Similar to the GDPR and  the CCPA, other local privacy law principles  also may institute penalties for businesses that suffer data breaches due to poor security procedures.
 Always be transparent and act upon privacy rights and federal law Regulations.
 
@@ -60,4 +63,4 @@ Always be transparent and act upon privacy rights and federal law Regulations.
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with BigBlueButton-liveStreaming.  If not, see [GNU.ORG](https://www.gnu.org/licenses/>).
+    along with BigBlueButton-liveStreaming.  If not, see [GNU.ORG](https://www.gnu.org/licenses/).
