@@ -37,3 +37,27 @@ You need to set some environment variables to run the container.
 ## Known Limitations
 * You must extract and provide the meetingID, which is not visible within the room.
 * ffmpeg settings to be improved
+
+## privacy policy and legal notes
+
+Please try to follow best practices for data protection and privacy.
+Take all steps to comply with privacy law principles that prohibit unlawful, opaque and limitless capture and processing of personal data. 
+The GDPR (General Data Protection Regulation) provides individual rights to EU citizens in relation to personal Data.
+To find out more about GDPR, please visit the [European Union’s website](https://ec.europa.eu).
+The California Consumer Privacy Act (CCPA) provides certain rights to California residents in relation to their personal information. 
+Similar to the GDPR and  the CCPA, other local privacy law principles  also may institute penalties for businesses that suffer data breaches due to poor security procedures.
+Always be transparent and act upon privacy rights and federal law Regulations.
+
+## License
+    BigBlueButton-liveStreaming is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    BigBlueButton-liveStreaming is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with BigBlueButton-liveStreaming.  If not, see [GNU.ORG](https://www.gnu.org/licenses/>).
