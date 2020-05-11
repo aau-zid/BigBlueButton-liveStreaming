@@ -60,6 +60,9 @@ def bbb_browser():
     element = EC.invisibility_of_element((By.CSS_SELECTOR, '.ReactModal__Overlay'))
     WebDriverWait(browser, selelnium_timeout).until(element)
 
+    browser.find_element_by_id('message-input').send_keys("Watcher can send messages to this meeting")
+    browser.find_elements_by_css_selector('[aria-label="Send message"]')[0].click()
+
     redis_r = redis.Redis(host=args.redis,charset="utf-8", decode_responses=True)
     redis_s = redis_r.pubsub()
     redis_s.psubscribe(**{args.channel:chat_handler})
