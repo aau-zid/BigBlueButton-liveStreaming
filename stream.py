@@ -82,7 +82,7 @@ def watch():
 def stream():
     audio_options = '-f alsa -i pulse -ac 2 -c:a aac -b:a 160k -ar 44100'
     #video_options = ' -c:v libvpx-vp9 -b:v 2000k -crf 33 -quality realtime -speed 5'
-    video_options = '-c:v libx264 -vf format=yuv420p -b:v 4000k -g 50 -preset ultrafast -tune zerolatency'
+    video_options = '-c:v libx264 -x264-params "nal-hrd=cbr" -vf format=yuv420p -b:v 4000k -g 60 -preset ultrafast -tune zerolatency'
     ffmpeg_stream = 'ffmpeg -thread_queue_size 512 -f x11grab -draw_mouse 0 -s 1920x1080  -i :%d %s -threads 0 %s -f flv "%s"' % ( 122, audio_options, video_options, args.target)
     ffmpeg_args = shlex.split(ffmpeg_stream)
     p = subprocess.Popen(ffmpeg_args)
