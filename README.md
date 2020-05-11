@@ -2,6 +2,8 @@
 
 Streams a given BBB Meeting to an RTMP Server.
 
+*License:*   [GNU GPL v3 or later](http://www.gnu.org/copyleft/gpl.html)
+
 ## Getting Started
 
 ### Prerequisites
