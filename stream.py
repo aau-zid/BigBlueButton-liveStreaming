@@ -58,10 +58,14 @@ def bbb_browser():
 
     element = EC.invisibility_of_element((By.CSS_SELECTOR, '.ReactModal__Overlay'))
     WebDriverWait(browser, selelnium_timeout).until(element)
+    browser.find_element_by_id('message-input').send_keys("This meeting will be stream to the following address: %s" % args.target)
+    browser.find_elements_by_css_selector('[aria-label="Send message"]')[0].click()
     browser.find_elements_by_id('chat-toggle-button')[0].click()
     browser.find_elements_by_css_selector('button[aria-label="Users and messages toggle"]')[0].click()
     browser.execute_script("document.querySelector('[aria-label=\"Users and messages toggle\"]').style.display='none';")
     browser.execute_script("document.querySelector('[aria-label=\"Options\"]').style.display='none';")
+    browser.execute_script("document.querySelector('[aria-label=\"Actions bar\"]').style.display='none';")
+    browser.execute_script("document.getElementById('container').setAttribute('style','margin-bottom:30px');")
 
 def get_join_url():
     minfo = bbb.get_meeting_info(args.id)
@@ -76,8 +80,10 @@ def watch():
         time.sleep(60)
 
 def stream():
-    logging.info('Starting Stream with cmd: ffmpeg -fflags +igndts -f x11grab -s 1920x1080 -r 24 -draw_mouse 0 -i :%d -f alsa -i pulse -ac 2 -preset ultrafaset -crf 0 -pix_fmt yuv420p -s 1920x1080 -c:a aac -b:a 160k -ar 44100 -threads 0 -f flv "%s"' % (122, args.target))
-    ffmpeg_stream = 'ffmpeg -fflags +igndts -f x11grab -s 1920x1080 -r 24 -draw_mouse 0 -i :%d -f alsa -i pulse -ac 2 -preset ultrafaset -pix_fmt yuv420p -s 1920x1080 -c:a aac -b:a 160k -ar 44100 -threads 0 -f flv "%s"' % (122, args.target)
+    audio_options = '-f alsa -i pulse -ac 2 -c:a aac -b:a 160k -ar 44100'
+    #video_options = ' -c:v libvpx-vp9 -b:v 2000k -crf 33 -quality realtime -speed 5'
+    video_options = '-c:v libx264 -x264-params "nal-hrd=cbr" -vf format=yuv420p -b:v 4000k -g 60 -preset ultrafast -tune zerolatency'
+    ffmpeg_stream = 'ffmpeg -thread_queue_size 512 -f x11grab -draw_mouse 0 -s 1920x1080  -i :%d %s -threads 0 %s -f flv "%s"' % ( 122, audio_options, video_options, args.target)
     ffmpeg_args = shlex.split(ffmpeg_stream)
     p = subprocess.Popen(ffmpeg_args)
 
