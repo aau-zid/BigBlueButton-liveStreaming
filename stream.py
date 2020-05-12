@@ -25,6 +25,7 @@ parser.add_argument("-i","--id", help="Big Blue Button Meeting ID")
 parser.add_argument("-m","--moderator", help="Join the meeting as moderator",action="store_true")
 parser.add_argument("-u","--user", help="Name to join the meeting",default="Live")
 parser.add_argument("-t","--target", help="RTMP Streaming URL")
+parser.add_argument("-c","--chat", help="Show the chat",action="store_true")
 args = parser.parse_args()
 
 bbb = BigBlueButton(args.server,args.secret)
@@ -60,8 +61,13 @@ def bbb_browser():
     WebDriverWait(browser, selelnium_timeout).until(element)
     browser.find_element_by_id('message-input').send_keys("This meeting will be stream to the following address: %s" % args.target)
     browser.find_elements_by_css_selector('[aria-label="Send message"]')[0].click()
-    browser.find_elements_by_id('chat-toggle-button')[0].click()
-    browser.find_elements_by_css_selector('button[aria-label="Users and messages toggle"]')[0].click()
+    
+    if args.chat:
+        browser.execute_script("document.querySelector('[aria-label=\"User list\"]').parentElement.style.display='none';")
+    else:
+        browser.find_elements_by_id('chat-toggle-button')[0].click()
+        browser.find_elements_by_css_selector('button[aria-label="Users and messages toggle"]')[0].click()
+        
     browser.execute_script("document.querySelector('[aria-label=\"Users and messages toggle\"]').style.display='none';")
     browser.execute_script("document.querySelector('[aria-label=\"Options\"]').style.display='none';")
     browser.execute_script("document.querySelector('[aria-label=\"Actions bar\"]').style.display='none';")
@@ -82,8 +88,8 @@ def watch():
 def stream():
     audio_options = '-f alsa -i pulse -ac 2 -c:a aac -b:a 160k -ar 44100'
     #video_options = ' -c:v libvpx-vp9 -b:v 2000k -crf 33 -quality realtime -speed 5'
-    video_options = '-c:v libx264 -x264-params "nal-hrd=cbr" -vf format=yuv420p -b:v 4000k -g 60 -preset ultrafast -tune zerolatency'
-    ffmpeg_stream = 'ffmpeg -thread_queue_size 512 -f x11grab -draw_mouse 0 -s 1920x1080  -i :%d %s -threads 0 %s -f flv "%s"' % ( 122, audio_options, video_options, args.target)
+    video_options = '-c:v libx264 -x264-params "nal-hrd=cbr" -profile:v high -level:v 4.2 -vf format=yuv420p -b:v 4000k -maxrate 4000k -minrate 2000k -bufsize 8000k -g 60 -preset ultrafast -tune zerolatency'
+    ffmpeg_stream = 'ffmpeg -thread_queue_size 1024 -f x11grab -draw_mouse 0 -s 1920x1080  -i :%d %s -threads 0 %s -f flv -flvflags no_duration_filesize "%s"' % ( 122, audio_options, video_options, args.target)
     ffmpeg_args = shlex.split(ffmpeg_stream)
     p = subprocess.Popen(ffmpeg_args)
 

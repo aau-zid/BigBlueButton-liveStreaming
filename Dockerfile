@@ -1,15 +1,18 @@
-FROM python:3
+ARG FFMPEG_VERSION=4.2.2
+
+FROM ubuntu:bionic
+ARG FFMPEG_VERSION
 
 WORKDIR /usr/src/app
 
-COPY py_requirements.txt ./
-
-RUN pip install --no-cache-dir -r py_requirements.txt
+RUN apt-get update && apt-get install -y software-properties-common && apt-get update && add-apt-repository ppa:jonathonf/ffmpeg-4
 
 RUN apt-get update && apt-get install -y \
+        python3-pip \
+        python3-dev \
         xvfb \
-        ffmpeg \
         fluxbox \
+        ffmpeg \
         dbus-x11 \
         libasound2 \
         libasound2-plugins\
@@ -17,6 +20,15 @@ RUN apt-get update && apt-get install -y \
         alsa-oss \
         pulseaudio \
         pulseaudio-utils 
+
+RUN ln -s /usr/bin/python3 /usr/local/bin/python \
+    && pip3 install --upgrade pip
+
+COPY py_requirements.txt ./
+
+RUN pip install --no-cache-dir -r py_requirements.txt
+
+
 
 RUN apt-get update && \
     apt-get install -y gnupg wget curl unzip --no-install-recommends && \
@@ -33,6 +45,7 @@ RUN apt-get update && \
 ENV BBB_AS_MODERATOR false
 ENV BBB_USER_NAME Live
 ENV BBB_CHAT_NAME Chat
+ENV BBB_SHOW_CHAT false
 ENV BBB_ENABLE_CHAT false
 ENV BBB_REDIS_HOST redis
 ENV BBB_REDIS_CHANNEL chat

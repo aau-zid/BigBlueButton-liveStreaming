@@ -4,7 +4,13 @@ JOIN_AS_MODERATOR="";
 if [ "${BBB_AS_MODERATOR}" = "true" ]
 then
    JOIN_AS_MODERATOR="-m";
-fi   
+fi 
+
+SHOW_CHAT="";
+if [ "${BBB_SHOW_CHAT}" = "true" ]
+then
+   SHOW_CHAT="-c";
+fi 
 
 if [ "${BBB_ENABLE_CHAT}" = "true" ]
 then
@@ -12,4 +18,4 @@ then
    sleep 10
 fi 
 
-xvfb-run -n 122 --server-args="-screen 0 1920x1080x24" python3 stream.py -s ${BBB_URL} -p ${BBB_SECRET} -i ${BBB_MEETING_ID} -t ${BBB_STREAM_URL} -u ${BBB_USER_NAME} $JOIN_AS_MODERATOR;
+xvfb-run -n 122 --server-args="-screen 0 1920x1080x24" python3 stream.py -s ${BBB_URL} -p ${BBB_SECRET} -i ${BBB_MEETING_ID} -t ${BBB_STREAM_URL} -u ${BBB_USER_NAME} ${SHOW_CHAT} $JOIN_AS_MODERATOR;
