@@ -23,6 +23,7 @@ You need to set some environment variables to run the container.
 #### Optional settings
 * BBB_AS_MODERATOR - if set to "true" the meeting will be joined as moderator
 * BBB_USER_NAME - the username to join the meeting. (Default: Live)
+* BBB_SHOW_CHAT - shows the chat on the left side of the window (Default: false)
 
 #### Chat settings
 * BBB_ENABLE_CHAT - Enable Chat feedback channel
