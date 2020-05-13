@@ -32,14 +32,16 @@ You need to set some environment variables to run the container.
 * BBB_CHAT_NAME - the username to join the meeting for chatting. (Default: Chat)
 
 ### Starting liveStreaming
-* wget -O docker-compose.yml https://raw.github.com/aau-zid/BigBlueButton-liveStreaming/1.0.0-beta.2/examples/docker-compose.yml.example
+* wget -O docker-compose.yml https://raw.github.com/aau-zid/BigBlueButton-liveStreaming/1.0.0-beta.3/examples/docker-compose.yml.example
 * (change configuration)
 * docker-compose up -d
 * docker-compose down 
 
 ## Known Limitations
 * You must extract and provide the meetingID, which is not visible within the room.
-* ffmpeg settings to be improved
+* the streamer cannot join meetings, that where not started yet
+* the streamer does not reconnect, if the connection to BigBlueButton gets lost
+* when using breakoutrooms, the streamer will show the popup of the invitation and not be able to get back to the conference
 
 ## privacy policy and legal notes
 
@@ -66,4 +68,4 @@ Always be transparent and act upon privacy rights and federal law Regulations.
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with BigBlueButton-liveStreaming.  If not, see [GNU.ORG](https://www.gnu.org/licenses/).
+    along with BigBlueButton-liveStreaming.  If not, see [GNU website](https://www.gnu.org/licenses/)
