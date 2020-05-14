@@ -59,7 +59,7 @@ def bbb_browser():
 
     element = EC.invisibility_of_element((By.CSS_SELECTOR, '.ReactModal__Overlay'))
     WebDriverWait(browser, selelnium_timeout).until(element)
-    browser.find_element_by_id('message-input').send_keys("This meeting will be stream to the following address: %s" % args.target)
+    browser.find_element_by_id('message-input').send_keys("This meeting is streamed to: %s" % args.target)
     browser.find_elements_by_css_selector('[aria-label="Send message"]')[0].click()
     
     if args.chat:
