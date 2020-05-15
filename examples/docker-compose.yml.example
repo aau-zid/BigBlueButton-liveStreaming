@@ -10,5 +10,13 @@ services:
       - BBB_SECRET=your_secret
       # BigBlueButton meetingID:
       - BBB_MEETING_ID=your_meetingID
+      # start meeting (optional):
+      - BBB_START_MEETING=false
+      # attendee password (optional - has to be set to the attendee password of moodle/greenlight or any other frontend to allow joining via their links):
+      - BBB_ATTENDEE_PASSWORD=IVLHwOBSVmYP
+      # moderator password (optional - has to be set to the moderator password of moodle/greenlight or any other frontend to allow joining via their links):
+      - BBB_MODERATOR_PASSWORD=JjeQYksarqLQ
+      # meeting title (optional):
+      - BBB_MEETING_TITLE=liveStreaming Test
       # Media server url:
       - BBB_STREAM_URL=rtmp://media_server_url/stream/stream_key

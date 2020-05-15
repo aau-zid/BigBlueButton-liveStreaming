@@ -22,6 +22,10 @@ You need to set some environment variables to run the container.
 
 #### Optional settings
 * BBB_AS_MODERATOR - if set to "true" the meeting will be joined as moderator
+* BBB_START_MEETING - start meeting
+* BBB_ATTENDEE_PASSWORD - attendee password (optional - has to be set to the attendee password of moodle/greenlight or any other frontend to allow joining via their links)
+* BBB_MODERATOR_PASSWORD - moderator password (optional - has to be set to the moderator password of moodle/greenlight or any other frontend to allow joining via their links)
+* BBB_MEETING_TITLE - meeting title (optional - only works if the meeting is started by the liveStreaming)
 * BBB_USER_NAME - the username to join the meeting. (Default: Live)
 * BBB_SHOW_CHAT - shows the chat on the left side of the window (Default: false)
 
@@ -32,7 +36,7 @@ You need to set some environment variables to run the container.
 * BBB_CHAT_NAME - the username to join the meeting for chatting. (Default: Chat)
 
 ### Starting liveStreaming
-* wget -O docker-compose.yml https://raw.github.com/aau-zid/BigBlueButton-liveStreaming/1.0.0-beta.3/examples/docker-compose.yml.example
+* wget -O docker-compose.yml https://raw.github.com/aau-zid/BigBlueButton-liveStreaming/1.0.0-beta.4/examples/docker-compose.yml.example
 * (change configuration)
 * docker-compose up -d
 * docker-compose down 
@@ -68,4 +72,4 @@ Always be transparent and act upon privacy rights and federal law Regulations.
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with BigBlueButton-liveStreaming.  If not, see [GNU website](https://www.gnu.org/licenses/)
+    along with BigBlueButton-liveStreaming.  If not, see [GNU website](https://www.gnu.org/licenses)
