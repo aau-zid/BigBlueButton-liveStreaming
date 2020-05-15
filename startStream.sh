@@ -12,10 +12,34 @@ then
    SHOW_CHAT="-c";
 fi 
 
+START_MEETING="";
+if [ "${BBB_START_MEETING}" != "" ]
+then
+   START_MEETING="-S";
+fi 
+
+ATTENDEE_PASSWORD="";
+if [ "${BBB_ATTENDEE_PASSWORD}" != "" ]
+then
+   ATTENDEE_PASSWORD="-A ${BBB_ATTENDEE_PASSWORD}";
+fi 
+
+MODERATOR_PASSWORD="";
+if [ "${BBB_MODERATOR_PASSWORD}" != "" ]
+then
+   MODERATOR_PASSWORD="-M ${BBB_MODERATOR_PASSWORD}";
+fi 
+
+MEETING_TITLE="";
+if [ "${BBB_MEETING_TITLE}" != "" ]
+then
+   MEETING_TITLE="${BBB_MEETING_TITLE}";
+fi 
+
 if [ "${BBB_ENABLE_CHAT}" = "true" ]
 then
-   xvfb-run -n 133 --server-args="-screen 0 1920x1080x24" python3 chat.py -s ${BBB_URL} -p ${BBB_SECRET} -i ${BBB_MEETING_ID} -r ${BBB_REDIS_HOST} -u ${BBB_CHAT_NAME} -c ${BBB_REDIS_CHANNEL} $JOIN_AS_MODERATOR &
+   xvfb-run -n 133 --server-args="-screen 0 1920x1080x24" python3 chat.py -s ${BBB_URL} -p ${BBB_SECRET} -i ${BBB_MEETING_ID} -r ${BBB_REDIS_HOST} -u ${BBB_CHAT_NAME} -c ${BBB_REDIS_CHANNEL} $START_MEETING $ATTENDEE_PASSWORD $MODERATOR_PASSWORD -T "$MEETING_TITLE" $JOIN_AS_MODERATOR &
    sleep 10
 fi 
 
-xvfb-run -n 122 --server-args="-screen 0 1920x1080x24" python3 stream.py -s ${BBB_URL} -p ${BBB_SECRET} -i ${BBB_MEETING_ID} -t ${BBB_STREAM_URL} -u ${BBB_USER_NAME} ${SHOW_CHAT} $JOIN_AS_MODERATOR;
+xvfb-run -n 122 --server-args="-screen 0 1920x1080x24" python3 stream.py -s ${BBB_URL} -p ${BBB_SECRET} -i ${BBB_MEETING_ID} -t ${BBB_STREAM_URL} -u ${BBB_USER_NAME} ${SHOW_CHAT} $START_MEETING $ATTENDEE_PASSWORD $MODERATOR_PASSWORD -T "$MEETING_TITLE" $JOIN_AS_MODERATOR;
