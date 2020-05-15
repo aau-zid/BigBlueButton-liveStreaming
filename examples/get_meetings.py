@@ -44,5 +44,7 @@ bbb = BigBlueButton(args.server,args.secret)
 meetings = get_meetings()
 for meeting in meetings['xml']['meetings']:
     print(meetings['xml']['meetings'][meeting]['meetingName'])
-    print(meetings['xml']['meetings'][meeting]['meetingID'])
+    print("ID: {}".format(meetings['xml']['meetings'][meeting]['meetingID']))
+    print("ATTENDEE_PASSWORD: {}".format(meetings['xml']['meetings'][meeting]['attendeePW']))
+    print("MODERATOR_PASSWORD: {}".format(meetings['xml']['meetings'][meeting]['moderatorPW']))
     print("")
