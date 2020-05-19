@@ -49,6 +49,9 @@ ENV BBB_SHOW_CHAT false
 ENV BBB_ENABLE_CHAT false
 ENV BBB_REDIS_HOST redis
 ENV BBB_REDIS_CHANNEL chat
+RUN DEBIAN_FRONTEND="noninteractive" apt-get -y install tzdata
+ENV TZ Europe/Vienna
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 COPY stream.py ./
 COPY chat.py ./

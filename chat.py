@@ -21,6 +21,10 @@ parser.add_argument("-s","--server", help="Big Blue Button Server URL")
 parser.add_argument("-p","--secret", help="Big Blue Button Secret")
 parser.add_argument("-i","--id", help="Big Blue Button Meeting ID")
 parser.add_argument("-m","--moderator", help="Join the meeting as moderator",action="store_true")
+parser.add_argument("-S","--startMeeting", help="start the meeting if not running",action="store_true")
+parser.add_argument("-A","--attendeePassword", help="attendee password (required to create meetings)")
+parser.add_argument("-M","--moderatorPassword", help="moderator password (required to create a meeting)")
+parser.add_argument("-T","--meetingTitle", help="meeting title (required to create a meeting)")
 parser.add_argument("-u","--user", help="Name to join the meeting",default="Live")
 parser.add_argument("-r","--redis", help="Redis hostname",default="redis")
 parser.add_argument("-c","--channel", help="Redis channel",default="chat")
@@ -51,6 +55,13 @@ def bbb_browser():
     global browser
 
     logging.info('Open BBB for chat!!')
+    if args.startMeeting is True:
+        try:
+            logging.info("create_meeting...")
+            create_meeting()
+        except exception.bbbexception.BBBException as ERR:
+            logging.info(ERR)
+
     browser.get(get_join_url())
 
     element = EC.presence_of_element_located((By.CSS_SELECTOR, '[aria-label="Listen only"]'))
@@ -73,6 +84,16 @@ def chat_handler(message):
     browser.find_element_by_id('message-input').send_keys(message['data'])
     browser.find_elements_by_css_selector('[aria-label="Send message"]')[0].click()
     logging.info(message['data'])
+
+def create_meeting():
+    create_params = {}
+    if args.moderatorPassword:
+        create_params['moderatorPW'] = args.moderatorPassword
+    if args.attendeePassword:
+        create_params['attendeePW'] = args.attendeePassword
+    if args.meetingTitle:
+        create_params['name'] = args.meetingTitle
+    return bbb.create_meeting(args.id, params=create_params)
 
 def get_join_url():
     minfo = bbb.get_meeting_info(args.id)

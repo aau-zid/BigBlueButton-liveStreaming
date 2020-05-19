@@ -6,10 +6,40 @@ then
    JOIN_AS_MODERATOR="-m";
 fi 
 
+STREAM_MEETING="";
+if [ "${BBB_STREAM_URL}" != "" ]
+then
+   STREAM_MEETING="-l -t ${BBB_STREAM_URL}";
+fi 
+
+DOWNLOAD_MEETING="";
+if [ "${BBB_DOWNLOAD_MEETING}" = "true" ]
+then
+   DOWNLOAD_MEETING="-d";
+fi 
+
 SHOW_CHAT="";
 if [ "${BBB_SHOW_CHAT}" = "true" ]
 then
    SHOW_CHAT="-c";
+fi 
+
+INTRO="";
+if [ "${BBB_INTRO}" != "" ]
+then
+   INTRO="-I ${BBB_INTRO}";
+fi 
+
+BEGIN_INTRO="";
+if [ "${BBB_BEGIN_INTRO_AT}" != "" ]
+then
+   BEGIN_INTRO="-B ${BBB_BEGIN_INTRO_AT}";
+fi 
+
+END_INTRO="";
+if [ "${BBB_END_INTRO_AT}" != "" ]
+then
+   END_INTRO="-E ${BBB_END_INTRO_AT}";
 fi 
 
 START_MEETING="";
@@ -42,4 +72,4 @@ then
    sleep 10
 fi 
 
-xvfb-run -n 122 --server-args="-screen 0 1920x1080x24" python3 stream.py -s ${BBB_URL} -p ${BBB_SECRET} -i ${BBB_MEETING_ID} -t ${BBB_STREAM_URL} -u ${BBB_USER_NAME} ${SHOW_CHAT} $START_MEETING $ATTENDEE_PASSWORD $MODERATOR_PASSWORD -T "$MEETING_TITLE" $JOIN_AS_MODERATOR;
+xvfb-run -n 122 --server-args="-screen 0 1920x1080x24" python3 stream.py -s ${BBB_URL} -p ${BBB_SECRET} -i ${BBB_MEETING_ID} -u ${BBB_USER_NAME} ${SHOW_CHAT} $START_MEETING $ATTENDEE_PASSWORD $MODERATOR_PASSWORD -T "$MEETING_TITLE" $STREAM_MEETING $INTRO $BEGIN_INTRO $END_INTRO $JOIN_AS_MODERATOR $DOWNLOAD_MEETING;
