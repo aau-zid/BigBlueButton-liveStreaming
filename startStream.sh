@@ -7,7 +7,7 @@ then
 fi 
 
 STREAM_MEETING="";
-if [ "${BBB_SSTREAM_MEETING}" = "true" ]
+if [ "${BBB_SSTREAM_URL}" = "true" ]
 then
    STREAM_MEETING="-l";
 fi 
