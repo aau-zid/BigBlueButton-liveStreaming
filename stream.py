@@ -12,6 +12,9 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 
+from datetime import datetime
+
+downloadProcess = None
 browser = None
 selelnium_timeout = 30
 connect_timeout = 5
@@ -114,29 +117,49 @@ def stream_intro():
         introBegin = "-ss %s"%(args.beginIntroAt)
     introEnd = ""
     if args.endIntroAt:
-        introEnd = "-t %s"%(args.endIntroAt)
-    ffmpeg_stream = 'ffmpeg -re %s %s -thread_queue_size 1024 -i %s %s -threads 0 %s -f flv "%s"' % ( introBegin, introEnd, args.intro, audio_options, video_options, args.target)
+        introEnd = "-to %s"%(args.endIntroAt)
+    ffmpeg_stream = 'ffmpeg -re %s %s -thread_queue_size 1024 -i %s -thread_queue_size 1024 %s -threads 0 %s -f flv "%s"' % ( introBegin, introEnd, args.intro, audio_options, video_options, args.target)
     ffmpeg_args = shlex.split(ffmpeg_stream)
+    logging.info("streaming intro...")
     p = subprocess.call(ffmpeg_args)
 
 def stream():
     audio_options = '-f alsa -i pulse -ac 2 -c:a aac -b:a 160k -ar 44100'
     #video_options = ' -c:v libvpx-vp9 -b:v 2000k -crf 33 -quality realtime -speed 5'
     video_options = '-c:v libx264 -x264-params "nal-hrd=cbr" -profile:v high -level:v 4.2 -vf format=yuv420p -b:v 4000k -maxrate 4000k -minrate 2000k -bufsize 8000k -g 60 -preset ultrafast -tune zerolatency'
-    ffmpeg_stream = 'ffmpeg -thread_queue_size 1024 -f x11grab -draw_mouse 0 -s 1920x1080  -i :%d %s -threads 0 %s -f flv -flvflags no_duration_filesize "%s"' % ( 122, audio_options, video_options, args.target)
+    ffmpeg_stream = 'ffmpeg -thread_queue_size 1024 -f x11grab -draw_mouse 0 -s 1920x1080  -i :%d -thread_queue_size 1024 %s -threads 0 %s -f flv -flvflags no_duration_filesize "%s"' % ( 122, audio_options, video_options, args.target)
     ffmpeg_args = shlex.split(ffmpeg_stream)
+    logging.info("streaming meeting...")
     p = subprocess.call(ffmpeg_args)
+
+def download():
+    downloadFile = "/video/meeting-%s.mkv" % fileTimeStamp 
+    audio_options = '-f alsa -i pulse -ac 2'
+    video_options = '-c:v libx264rgb -crf 0 -preset ultrafast'
+    ffmpeg_stream = 'ffmpeg -thread_queue_size 1024 -f x11grab -draw_mouse 0 -s 1920x1080  -i :%d -thread_queue_size 1024 %s %s %s' % ( 122, audio_options, video_options, downloadFile)
+    ffmpeg_args = shlex.split(ffmpeg_stream)
+    logging.info("saving meeting as %s" % downloadFile)
+    return subprocess.Popen(ffmpeg_args)
 
 if args.startMeeting is False:
     while bbb.is_meeting_running(args.id).is_meeting_running() != True:
         logging.info("Meeting isn't running. We will try again in %d seconds!" % connect_timeout)
         time.sleep(connect_timeout)
+
+# current date and time
+now = datetime.now()
+fileTimeStamp = now.strftime("%Y%m%d%H%M%S")
+
 set_up()
-if args.intro:
+if args.stream and args.intro:
     stream_intro()
 if args.stream or args.download:
     bbb_browser()
+if args.download:
+    downloadProcess = download()
 if args.stream:
     stream()
+if downloadProcess:
+    downloadProcess.communicate(input=None)
 if browser:
     browser.quit()

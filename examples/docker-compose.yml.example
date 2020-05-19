@@ -28,6 +28,8 @@ services:
       - BBB_END_INTRO_AT=
       # Media server url:
       - BBB_STREAM_URL=rtmp://media_server_url/stream/stream_key
+      # Timezone (default: Europe/Vienna):
+      - TZ=Europe/Vienna
 
     volumes:
       - ./videodata:/video
