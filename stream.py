@@ -22,6 +22,11 @@ parser = argparse.ArgumentParser()
 parser.add_argument("-s","--server", help="Big Blue Button Server URL")
 parser.add_argument("-p","--secret", help="Big Blue Button Secret")
 parser.add_argument("-i","--id", help="Big Blue Button Meeting ID")
+parser.add_argument("-I","--intro", help="Intro file to play before streaming")
+parser.add_argument("-B","--beginIntroAt", help="begin intro at position (e.g. 00:01:05)")
+parser.add_argument("-E","--endIntroAt", help="End intro at position (e.g. 01:00:04)")
+parser.add_argument("-l","--stream", help="live stream a BigBlueButton meeting",action="store_true")
+parser.add_argument("-d","--download", help="download / save a BigBlueButton meeting",action="store_true")
 parser.add_argument("-m","--moderator", help="Join the meeting as moderator",action="store_true")
 parser.add_argument("-S","--startMeeting", help="start the meeting if not running",action="store_true")
 parser.add_argument("-A","--attendeePassword", help="attendee password (required to create meetings)")
@@ -101,9 +106,18 @@ def get_join_url():
         pwd = minfo.get_meetinginfo().get_attendeepw()
     return bbb.get_join_meeting_url(args.user,args.id, pwd)
 
-def watch():
-    while True:
-        time.sleep(60)
+def stream_intro():
+    audio_options = '-f alsa -i pulse -ac 2 -c:a aac -b:a 160k -ar 44100'
+    video_options = '-c:v libx264 -x264-params "nal-hrd=cbr" -profile:v high -level:v 4.2 -vf format=yuv420p -b:v 4000k -maxrate 4000k -minrate 2000k -bufsize 8000k -g 60 -preset ultrafast'
+    introBegin = ""
+    if args.beginIntroAt:
+        introBegin = "-ss %s"%(args.beginIntroAt)
+    introEnd = ""
+    if args.endIntroAt:
+        introEnd = "-t %s"%(args.endIntroAt)
+    ffmpeg_stream = 'ffmpeg -re %s %s -thread_queue_size 1024 -i %s %s -threads 0 %s -f flv "%s"' % ( introBegin, introEnd, args.intro, audio_options, video_options, args.target)
+    ffmpeg_args = shlex.split(ffmpeg_stream)
+    p = subprocess.call(ffmpeg_args)
 
 def stream():
     audio_options = '-f alsa -i pulse -ac 2 -c:a aac -b:a 160k -ar 44100'
@@ -111,14 +125,18 @@ def stream():
     video_options = '-c:v libx264 -x264-params "nal-hrd=cbr" -profile:v high -level:v 4.2 -vf format=yuv420p -b:v 4000k -maxrate 4000k -minrate 2000k -bufsize 8000k -g 60 -preset ultrafast -tune zerolatency'
     ffmpeg_stream = 'ffmpeg -thread_queue_size 1024 -f x11grab -draw_mouse 0 -s 1920x1080  -i :%d %s -threads 0 %s -f flv -flvflags no_duration_filesize "%s"' % ( 122, audio_options, video_options, args.target)
     ffmpeg_args = shlex.split(ffmpeg_stream)
-    p = subprocess.Popen(ffmpeg_args)
+    p = subprocess.call(ffmpeg_args)
 
 if args.startMeeting is False:
     while bbb.is_meeting_running(args.id).is_meeting_running() != True:
         logging.info("Meeting isn't running. We will try again in %d seconds!" % connect_timeout)
         time.sleep(connect_timeout)
 set_up()
-bbb_browser()
-stream()
-watch()
-browser.quit()
+if args.intro:
+    stream_intro()
+if args.stream or args.download:
+    bbb_browser()
+if args.stream:
+    stream()
+if browser:
+    browser.quit()

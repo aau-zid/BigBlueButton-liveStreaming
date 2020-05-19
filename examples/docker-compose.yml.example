@@ -18,5 +18,18 @@ services:
       - BBB_MODERATOR_PASSWORD=JjeQYksarqLQ
       # meeting title (optional):
       - BBB_MEETING_TITLE=liveStreaming Test
+      # stream BigblueButton meeting
+      - BBB_SSTREAM_MEETING=true
+      # download / save BigBlueButton meeting
+      - BBB_DOWNLOAD_MEETING=false
+      # play intro file (can be a local file in videodata folder e.g. /video/intro.mp4 or a url of a mediastream e.g. https://my.intro.stream)
+      - BBB_INTRO=false
+      # begin the intro at position (optional, e.g. 00:00:05)
+      - BBB_BEGIN_INTRO_AT=04:40
+      # end intro after (optional, e.g. 01:00:00 - after one hour)
+      - BBB_END_INTRO_AT=
       # Media server url:
       - BBB_STREAM_URL=rtmp://media_server_url/stream/stream_key
+
+    volumes:
+      - ./videodata:/video
