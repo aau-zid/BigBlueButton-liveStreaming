@@ -16,13 +16,13 @@ services:
       # Media server url:
       - BBB_STREAM_URL=rtmp://media_server_url/stream/stream_key
       # Enable chat functionality
-      -BBB_ENABLE_CHAT=true
+      - BBB_ENABLE_CHAT=true
       # show chat in live stream
-      -BBB_SHOW_CHAT=false
+      - BBB_SHOW_CHAT=false
       # Set REDIS host (default: 'redis')
-      -BBB_REDIS_HOST=redis
+      - BBB_REDIS_HOST=redis
       # Set REDIS channel to subscribe (default: 'chat')
-      -BBB_REDIS_CHANNEL=chat
+      - BBB_REDIS_CHANNEL=chat
       # Username for the chat (default: 'Chat')
       -BBB_CHAT_NAME=Chat
     networks:
