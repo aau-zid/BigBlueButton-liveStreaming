@@ -24,7 +24,7 @@ services:
       # Set REDIS channel to subscribe (default: 'chat')
       - BBB_REDIS_CHANNEL=chat
       # Username for the chat (default: 'Chat')
-      -BBB_CHAT_NAME=Chat
+      - BBB_CHAT_NAME=Chat
     networks:
       - app-tier
 networks:
