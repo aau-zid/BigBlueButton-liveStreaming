@@ -111,7 +111,7 @@ def get_join_url():
 
 def stream_intro():
     audio_options = '-f alsa -i pulse -ac 2 -c:a aac -b:a 160k -ar 44100'
-    video_options = '-c:v libx264 -x264-params "nal-hrd=cbr" -profile:v high -level:v 4.2 -vf format=yuv420p -b:v 4000k -maxrate 4000k -minrate 2000k -bufsize 8000k -g 60 -preset ultrafast'
+    video_options = '-c:v libx264 -x264-params "nal-hrd=vbr" -profile:v high -level:v 4.2 -vf format=yuv420p -b:v 4000k -maxrate 4000k -minrate 2000k -bufsize 8000k -g 60 -preset ultrafast'
     introBegin = ""
     if args.beginIntroAt:
         introBegin = "-ss %s"%(args.beginIntroAt)
@@ -126,7 +126,7 @@ def stream_intro():
 def stream():
     audio_options = '-f alsa -i pulse -ac 2 -c:a aac -b:a 160k -ar 44100'
     #video_options = ' -c:v libvpx-vp9 -b:v 2000k -crf 33 -quality realtime -speed 5'
-    video_options = '-c:v libx264 -x264-params "nal-hrd=cbr" -profile:v high -level:v 4.2 -vf format=yuv420p -b:v 4000k -maxrate 4000k -minrate 2000k -bufsize 8000k -g 60 -preset ultrafast -tune zerolatency'
+    video_options = '-c:v libx264 -x264-params "nal-hrd=vbr" -profile:v high -level:v 4.2 -vf format=yuv420p -b:v 4000k -maxrate 4000k -minrate 2000k -bufsize 8000k -g 60 -preset ultrafast -tune zerolatency'
     ffmpeg_stream = 'ffmpeg -thread_queue_size 1024 -f x11grab -draw_mouse 0 -s 1920x1080  -i :%d -thread_queue_size 1024 %s -threads 0 %s -f flv -flvflags no_duration_filesize "%s"' % ( 122, audio_options, video_options, args.target)
     ffmpeg_args = shlex.split(ffmpeg_stream)
     logging.info("streaming meeting...")
