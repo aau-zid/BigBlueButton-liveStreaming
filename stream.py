@@ -30,7 +30,6 @@ parser.add_argument("-B","--beginIntroAt", help="begin intro at position (e.g. 0
 parser.add_argument("-E","--endIntroAt", help="End intro at position (e.g. 01:00:04)")
 parser.add_argument("-l","--stream", help="live stream a BigBlueButton meeting",action="store_true")
 parser.add_argument("-d","--download", help="download / save a BigBlueButton meeting",action="store_true")
-parser.add_argument("-m","--moderator", help="Join the meeting as moderator",action="store_true")
 parser.add_argument("-S","--startMeeting", help="start the meeting if not running",action="store_true")
 parser.add_argument("-A","--attendeePassword", help="attendee password (required to create meetings)")
 parser.add_argument("-M","--moderatorPassword", help="moderator password (required to create a meeting)")

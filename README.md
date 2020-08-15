@@ -21,7 +21,6 @@ You need to set some environment variables to run the container.
 * BBB_STREAM_URL - URL of your streaming server including rtmp. Leave out to disable streaming. (e.g. rtmp://media_server_url/stream/stream_key)
 
 #### Optional settings
-* BBB_AS_MODERATOR - if set to "true" the meeting will be joined as moderator
 * BBB_START_MEETING - start meeting
 * BBB_ATTENDEE_PASSWORD - attendee password (optional - has to be set to the attendee password of moodle/greenlight or any other frontend to allow joining via their links)
 * BBB_MODERATOR_PASSWORD - moderator password (optional - has to be set to the moderator password of moodle/greenlight or any other frontend to allow joining via their links)
