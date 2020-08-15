@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import sys, argparse, time, logging, os, redis
 from bigbluebutton_api_python import BigBlueButton
-
+from bigbluebutton_api_python import util as bbbUtil 
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
@@ -31,6 +31,7 @@ parser.add_argument("-c","--channel", help="Redis channel",default="chat")
 args = parser.parse_args()
 
 bbb = BigBlueButton(args.server,args.secret)
+bbbUB = bbbUtil.UrlBuilder(args.server,args.secret)
 
 def set_up():
     global browser
@@ -62,14 +63,13 @@ def bbb_browser():
         except exception.bbbexception.BBBException as ERR:
             logging.info(ERR)
 
-    browser.get(get_join_url())
+    join_url = get_join_url()
+    logging.info(join_url)
+    browser.get(join_url)
 
     element = EC.presence_of_element_located((By.CSS_SELECTOR, '[aria-label="Listen only"]'))
     WebDriverWait(browser, selelnium_timeout).until(element)
     browser.find_elements_by_css_selector('[aria-label="Listen only"]')[0].click()
-
-    element = EC.invisibility_of_element((By.CSS_SELECTOR, '.ReactModal__Overlay'))
-    WebDriverWait(browser, selelnium_timeout).until(element)
 
     browser.find_element_by_id('message-input').send_keys("Viewers of the live stream can now send messages to this meeting")
     browser.find_elements_by_css_selector('[aria-label="Send message"]')[0].click()
@@ -97,11 +97,18 @@ def create_meeting():
 
 def get_join_url():
     minfo = bbb.get_meeting_info(args.id)
-    if args.moderator:
-        pwd = minfo.get_meetinginfo().get_moderatorpw()
-    else:
-        pwd = minfo.get_meetinginfo().get_attendeepw()
-    return bbb.get_join_meeting_url(args.user,args.id,pwd)
+    pwd = minfo.get_meetinginfo().get_attendeepw()
+    joinParams = {}
+    joinParams['meetingID'] = args.id
+    joinParams['fullName'] = args.user
+    joinParams['password'] = pwd
+    joinParams['userdata-bbb_auto_join_audio'] = "true" 
+    joinParams['userdata-bbb_enable_video'] = 'false' 
+    joinParams['userdata-bbb_listen_only_mode'] = "true" 
+    joinParams['userdata-bbb_force_listen_only'] = "false" 
+    joinParams['userdata-bbb_skip_check_audio'] = 'true' 
+    return bbbUB.buildUrl("join", params=joinParams) 
+
 
 def chat():
     while True:
