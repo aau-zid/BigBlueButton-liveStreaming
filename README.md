@@ -21,7 +21,6 @@ You need to set some environment variables to run the container.
 * BBB_STREAM_URL - URL of your streaming server including rtmp. Leave out to disable streaming. (e.g. rtmp://media_server_url/stream/stream_key)
 
 #### Optional settings
-* BBB_AS_MODERATOR - if set to "true" the meeting will be joined as moderator
 * BBB_START_MEETING - start meeting
 * BBB_ATTENDEE_PASSWORD - attendee password (optional - has to be set to the attendee password of moodle/greenlight or any other frontend to allow joining via their links)
 * BBB_MODERATOR_PASSWORD - moderator password (optional - has to be set to the moderator password of moodle/greenlight or any other frontend to allow joining via their links)
@@ -45,6 +44,16 @@ You need to set some environment variables to run the container.
 * (change configuration)
 * docker-compose up -d
 * docker-compose down 
+
+### Chat feedback
+to use the user feedback via chat injection you will have to setup a website wehre the user can write comments and send them to your meeting.
+In the examples folder, there are two files you can use as starting point:
+
+* player_and_chat.php
+place this in a public webpage or create a similar webform that will be send to the processing php file sendChatMessage.php
+
+* sendChatMessage.php
+this file must be reachable by the webform and has to have access to the redis database you configured in your docker-compose file.
 
 ## Known Limitations
 * the streamer does not reconnect, if the connection to BigBlueButton gets lost
