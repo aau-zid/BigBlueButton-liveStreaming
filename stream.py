@@ -79,7 +79,7 @@ def bbb_browser():
     WebDriverWait(browser, selelnium_timeout).until(element)
     browser.find_elements_by_css_selector('[aria-label="Listen only"]')[0].click()
 
-    browser.find_element_by_id('message-input').send_keys("This meeting is streamed to: %s" % args.target)
+    browser.find_element_by_id('message-input').send_keys("This meeting is streamed to: %s" % args.target.partition('//')[2].partition('/')[0])
     browser.find_elements_by_css_selector('[aria-label="Send message"]')[0].click()
     
     if args.chat:
