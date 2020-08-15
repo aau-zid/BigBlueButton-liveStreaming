@@ -38,7 +38,7 @@ then
 fi 
 
 START_MEETING="";
-if [ "${BBB_START_MEETING}" != "" ]
+if [ "${BBB_START_MEETING}" = "true" ]
 then
    START_MEETING="-S";
 fi 
