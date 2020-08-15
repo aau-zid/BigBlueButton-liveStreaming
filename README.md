@@ -45,6 +45,16 @@ You need to set some environment variables to run the container.
 * docker-compose up -d
 * docker-compose down 
 
+### Chat feedback
+to use the user feedback via chat injection you will have to setup a website wehre the user can write comments and send them to your meeting.
+In the examples folder, there are two files you can use as starting point:
+
+* player_and_chat.php
+place this in a public webpage or create a similar webform that will be send to the processing php file sendChatMessage.php
+
+* sendChatMessage.php
+this file must be reachable by the webform and has to have access to the redis database you configured in your docker-compose file.
+
 ## Known Limitations
 * the streamer does not reconnect, if the connection to BigBlueButton gets lost
 * when using breakoutrooms, the streamer will show the popup of the invitation and not be able to get back to the conference
