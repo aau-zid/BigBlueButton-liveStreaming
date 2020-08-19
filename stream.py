@@ -16,7 +16,7 @@ from datetime import datetime
 
 downloadProcess = None
 browser = None
-selelnium_timeout = 30
+selenium_timeout = 30
 connect_timeout = 5
 
 logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
@@ -75,7 +75,7 @@ def bbb_browser():
     browser.get(join_url)
 
     element = EC.presence_of_element_located((By.CSS_SELECTOR, '[aria-label="Listen only"]'))
-    WebDriverWait(browser, selelnium_timeout).until(element)
+    WebDriverWait(browser, selenium_timeout).until(element)
     browser.find_elements_by_css_selector('[aria-label="Listen only"]')[0].click()
 
     browser.find_element_by_id('message-input').send_keys("This meeting is streamed to: %s" % args.target.partition('//')[2].partition('/')[0])
