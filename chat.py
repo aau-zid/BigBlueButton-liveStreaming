@@ -66,10 +66,12 @@ def bbb_browser():
     logging.info(join_url)
     browser.get(join_url)
 
-    element = EC.presence_of_element_located((By.CSS_SELECTOR, '[aria-label="Listen only"]'))
+    element = EC.presence_of_element_located((By.XPATH, '//span[contains(@class,"success")]'))
     WebDriverWait(browser, selelnium_timeout).until(element)
-    browser.find_elements_by_css_selector('[aria-label="Listen only"]')[0].click()
+    browser.find_elements_by_xpath('//span[contains(@class,"success")]')[0].click()
 
+    element = EC.invisibility_of_element((By.CSS_SELECTOR, '.ReactModal__Overlay'))
+    WebDriverWait(browser, selelnium_timeout).until(element)
     browser.find_element_by_id('message-input').send_keys("Viewers of the live stream can now send messages to this meeting")
     browser.find_elements_by_css_selector('[aria-label="Send message"]')[0].click()
 
@@ -104,7 +106,7 @@ def get_join_url():
     joinParams['userdata-bbb_auto_join_audio'] = "true" 
     joinParams['userdata-bbb_enable_video'] = 'false' 
     joinParams['userdata-bbb_listen_only_mode'] = "true" 
-    joinParams['userdata-bbb_force_listen_only'] = "false" 
+    joinParams['userdata-bbb_force_listen_only'] = "true" 
     joinParams['userdata-bbb_skip_check_audio'] = 'true' 
     return bbbUB.buildUrl("join", params=joinParams) 
 
