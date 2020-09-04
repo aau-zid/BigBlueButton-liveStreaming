@@ -19,6 +19,12 @@ then
    SHOW_CHAT="-c";
 fi 
 
+USE_HTML5="-H";
+if [ "${BBB_USE_HTML5}" = "false" ]
+then
+   USE_HTML5="";
+fi
+
 INTRO="";
 if [ "${BBB_INTRO}" != "" ]
 then
@@ -67,4 +73,4 @@ then
    sleep 10
 fi 
 
-xvfb-run -n 122 --server-args="-screen 0 1920x1080x24" python3 stream.py -s ${BBB_URL} -p ${BBB_SECRET} -i "${BBB_MEETING_ID}" -u "${BBB_USER_NAME}" ${SHOW_CHAT} $START_MEETING $ATTENDEE_PASSWORD $MODERATOR_PASSWORD -T "$MEETING_TITLE" $STREAM_MEETING $INTRO $BEGIN_INTRO $END_INTRO $DOWNLOAD_MEETING;
+xvfb-run -n 122 --server-args="-screen 0 1920x1080x24" python3 stream.py -s ${BBB_URL} -p ${BBB_SECRET} -i "${BBB_MEETING_ID}" -u "${BBB_USER_NAME}" ${SHOW_CHAT} ${USE_HTML5} $START_MEETING $ATTENDEE_PASSWORD $MODERATOR_PASSWORD -T "$MEETING_TITLE" $STREAM_MEETING $INTRO $BEGIN_INTRO $END_INTRO $DOWNLOAD_MEETING;

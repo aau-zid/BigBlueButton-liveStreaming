@@ -37,6 +37,7 @@ parser.add_argument("-T","--meetingTitle", help="meeting title (required to crea
 parser.add_argument("-u","--user", help="Name to join the meeting",default="Live")
 parser.add_argument("-t","--target", help="RTMP Streaming URL")
 parser.add_argument("-c","--chat", help="Show the chat",action="store_true")
+parser.add_argument("-H","--HTML5", help="Use HTML5 client",action="store_true")
 args = parser.parse_args()
 
 bbb = BigBlueButton(args.server,args.secret)
@@ -116,6 +117,8 @@ def get_join_url():
     joinParams['userdata-bbb_listen_only_mode'] = "true" 
     joinParams['userdata-bbb_force_listen_only'] = "true" 
     joinParams['userdata-bbb_skip_check_audio'] = 'true' 
+    if args.HTML5:
+      joinParams['joinViaHtml5'] = 'true' 
     return bbbUB.buildUrl("join", params=joinParams) 
 
 def stream_intro():
