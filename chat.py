@@ -109,6 +109,7 @@ def get_join_url():
     joinParams['userdata-bbb_force_listen_only'] = "true" 
     joinParams['userdata-bbb_skip_check_audio'] = 'true' 
     return bbbUB.buildUrl("join", params=joinParams) 
+    joinParams['joinViaHtml5'] = 'true'
 
 
 def chat():

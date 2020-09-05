@@ -17,12 +17,6 @@ SHOW_CHAT="";
 if [ "${BBB_SHOW_CHAT}" = "true" ]
 then
    SHOW_CHAT="-c";
-fi 
-
-USE_HTML5="-H";
-if [ "${BBB_USE_HTML5}" = "false" ]
-then
-   USE_HTML5="";
 fi
 
 INTRO="";
