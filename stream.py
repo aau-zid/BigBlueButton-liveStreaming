@@ -116,6 +116,7 @@ def get_join_url():
     joinParams['userdata-bbb_listen_only_mode'] = "true" 
     joinParams['userdata-bbb_force_listen_only'] = "true" 
     joinParams['userdata-bbb_skip_check_audio'] = 'true' 
+    joinParams['joinViaHtml5'] = 'true'
     return bbbUB.buildUrl("join", params=joinParams) 
 
 def stream_intro():

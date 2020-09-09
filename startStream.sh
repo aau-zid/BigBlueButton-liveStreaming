@@ -17,7 +17,7 @@ SHOW_CHAT="";
 if [ "${BBB_SHOW_CHAT}" = "true" ]
 then
    SHOW_CHAT="-c";
-fi 
+fi
 
 INTRO="";
 if [ "${BBB_INTRO}" != "" ]
