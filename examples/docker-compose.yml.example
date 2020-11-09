@@ -30,6 +30,10 @@ services:
       - BBB_STREAM_URL=rtmp://media_server_url/stream/stream_key
       # Resolution to be streamed/downloaded in format WxH (default 1920x1080)
       - BBB_RESOLUTION=1920x1080
+      # stream video bitrate
+      - FFMPEG_STREAM_VIDEO_BITRATE=4000
+      # threads used for stream (0=auto)
+      - FFMPEG_STREAM_THREADS=0
       # Timezone (default: Europe/Vienna):
       - TZ=Europe/Vienna
 
