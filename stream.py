@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import sys, argparse, time, subprocess, shlex, logging, os
+import sys, argparse, time, subprocess, shlex, logging, os, re
 
 from bigbluebutton_api_python import BigBlueButton, exception
 from bigbluebutton_api_python import util as bbbUtil 
@@ -38,6 +38,7 @@ parser.add_argument("-T","--meetingTitle", help="meeting title (required to crea
 parser.add_argument("-u","--user", help="Name to join the meeting",default="Live")
 parser.add_argument("-t","--target", help="RTMP Streaming URL")
 parser.add_argument("-c","--chat", help="Show the chat",action="store_true")
+parser.add_argument("-r","--resolution", help="Resolution as WxH", default='1920x1080')
 args = parser.parse_args()
 
 bbb = BigBlueButton(args.server,args.secret)
@@ -46,11 +47,13 @@ bbbUB = bbbUtil.UrlBuilder(args.server,args.secret)
 def set_up():
     global browser
 
+    assert re.fullmatch(r'\d+x\d+', args.resolution)
+
     options = Options()  
     options.add_argument('--disable-infobars') 
     options.add_argument('--no-sandbox') 
     options.add_argument('--kiosk') 
-    options.add_argument('--window-size=1920,1080')
+    options.add_argument('--window-size=%s' % args.resolution.replace('x', ','))
     options.add_argument('--window-position=0,0')
     options.add_experimental_option("excludeSwitches", ['enable-automation']);   
     options.add_argument('--shm-size=1gb') 
@@ -156,7 +159,7 @@ def stream():
     audio_options = '-f pulse -i default -ac 2 -c:a aac -b:a 160k -ar 44100'
     #video_options = ' -c:v libvpx-vp9 -b:v 2000k -crf 33 -quality realtime -speed 5'
     video_options = '-c:v libx264 -x264-params "nal-hrd=cbr" -profile:v high -level:v 4.2 -vf format=yuv420p -b:v 4000k -maxrate 4000k -minrate 2000k -bufsize 8000k -g 60 -preset ultrafast -tune zerolatency'
-    ffmpeg_stream = 'ffmpeg -thread_queue_size 1024 -f x11grab -draw_mouse 0 -s 1920x1080  -i :%d -thread_queue_size 1024 %s -threads 0 %s -f flv -flvflags no_duration_filesize "%s"' % ( 122, audio_options, video_options, args.target)
+    ffmpeg_stream = 'ffmpeg -thread_queue_size 1024 -f x11grab -draw_mouse 0 -s %s  -i :%d -thread_queue_size 1024 %s -threads 0 %s -f flv -flvflags no_duration_filesize "%s"' % (args.resolution, 122, audio_options, video_options, args.target)
     ffmpeg_args = shlex.split(ffmpeg_stream)
     logging.info("streaming meeting...")
     p = subprocess.call(ffmpeg_args)
@@ -165,7 +168,7 @@ def download():
     downloadFile = "/video/meeting-%s.mkv" % fileTimeStamp 
     audio_options = '-f pulse -i default -ac 2'
     video_options = '-c:v libx264rgb -crf 0 -preset ultrafast'
-    ffmpeg_stream = 'ffmpeg -thread_queue_size 1024 -f x11grab -draw_mouse 0 -s 1920x1080  -i :%d -thread_queue_size 1024 %s %s %s' % ( 122, audio_options, video_options, downloadFile)
+    ffmpeg_stream = 'ffmpeg -thread_queue_size 1024 -f x11grab -draw_mouse 0 -s %s  -i :%d -thread_queue_size 1024 %s %s %s' % (args.resolution, 122, audio_options, video_options, downloadFile)
     ffmpeg_args = shlex.split(ffmpeg_stream)
     logging.info("saving meeting as %s" % downloadFile)
     return subprocess.Popen(ffmpeg_args)

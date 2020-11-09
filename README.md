@@ -31,6 +31,7 @@ You need to set some environment variables to run the container.
 * BBB_END_INTRO_AT= - end intro after (optional, e.g. 01:00:00 - after one hour)
 * BBB_USER_NAME - the username to join the meeting. (Default: Live)
 * BBB_SHOW_CHAT - shows the chat on the left side of the window (Default: false)
+* BBB_RESOLUTION - the streamed/downloaded resolution (Default: 1920x1080)
 * TZ - Timezone (Default: Europe/Vienna)
 
 #### Chat settings

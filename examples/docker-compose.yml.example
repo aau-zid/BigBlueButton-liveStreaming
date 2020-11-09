@@ -28,6 +28,8 @@ services:
       - BBB_END_INTRO_AT=
       # Media server url:
       - BBB_STREAM_URL=rtmp://media_server_url/stream/stream_key
+      # Resolution to be streamed/downloaded in format WxH (default 1920x1080)
+      - BBB_RESOLUTION=1920x1080
       # Timezone (default: Europe/Vienna):
       - TZ=Europe/Vienna
 
