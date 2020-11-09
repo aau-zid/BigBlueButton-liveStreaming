@@ -80,8 +80,11 @@ def bbb_browser():
 
     element = EC.invisibility_of_element((By.CSS_SELECTOR, '.ReactModal__Overlay'))
     WebDriverWait(browser, selelnium_timeout).until(element)
-    browser.find_element_by_id('message-input').send_keys("This meeting is streamed to: %s" % args.target.partition('//')[2].partition('/')[0])
-    browser.find_elements_by_css_selector('[aria-label="Send message"]')[0].click()
+    element = browser.find_element_by_id('message-input')
+    chat_send = browser.find_elements_by_css_selector('[aria-label="Send message"]')[0]
+    if element.is_enabled() and chat_send.is_enabled():
+       element.send_keys("This meeting is streamed to: %s" % args.target.partition('//')[2].partition('/')[0])
+       chat_send.click()
     
     if args.chat:
         browser.execute_script("document.querySelector('[aria-label=\"User list\"]').parentElement.style.display='none';")
@@ -112,7 +115,7 @@ def get_join_url():
     joinParams['fullName'] = args.user
     joinParams['password'] = pwd
     joinParams['userdata-bbb_auto_join_audio'] = "true" 
-    joinParams['userdata-bbb_enable_video'] = 'false' 
+    joinParams['userdata-bbb_enable_video'] = 'true' 
     joinParams['userdata-bbb_listen_only_mode'] = "true" 
     joinParams['userdata-bbb_force_listen_only'] = "true" 
     joinParams['userdata-bbb_skip_check_audio'] = 'true' 
