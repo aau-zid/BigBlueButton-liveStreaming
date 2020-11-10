@@ -7,6 +7,7 @@ from bigbluebutton_api_python import BigBlueButton, exception
 from bigbluebutton_api_python import util as bbbUtil 
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys  
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.chrome.options import Options  
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -80,15 +81,33 @@ def bbb_browser():
 
     element = EC.invisibility_of_element((By.CSS_SELECTOR, '.ReactModal__Overlay'))
     WebDriverWait(browser, selelnium_timeout).until(element)
-    browser.find_element_by_id('message-input').send_keys("This meeting is streamed to: %s" % args.target.partition('//')[2].partition('/')[0])
-    browser.find_elements_by_css_selector('[aria-label="Send message"]')[0].click()
-    
-    if args.chat:
-        browser.execute_script("document.querySelector('[aria-label=\"User list\"]').parentElement.style.display='none';")
-    else:
-        browser.find_elements_by_id('chat-toggle-button')[0].click()
-        browser.find_elements_by_css_selector('button[aria-label="Users and messages toggle"]')[0].click()
-        
+
+    try:
+        element = browser.find_element_by_id('message-input')
+        chat_send = browser.find_elements_by_css_selector('[aria-label="Send message"]')[0]
+        # ensure chat is enabled (might be locked by moderator)
+        if element.is_enabled() and chat_send.is_enabled():
+           element.send_keys("This meeting is streamed to: %s" % args.target.partition('//')[2].partition('/')[0])
+           chat_send.click()
+
+        if args.chat:
+           browser.execute_script("document.querySelector('[aria-label=\"User list\"]').parentElement.style.display='none';")
+        else:
+            element = browser.find_elements_by_id('chat-toggle-button')[0]
+            if element.is_enabled():
+                element.click()
+    except NoSuchElementException:
+        # ignore (chat might be disabled) 
+        logging.info("could not find chat input or chat toggle")
+
+    if not args.chat:
+        try:
+            element = browser.find_elements_by_css_selector('button[aria-label="Users and messages toggle"]')[0]
+            if element.is_enabled():
+                element.click()
+        except NoSuchElementException:
+            logging.info("could not find users and messages toggle")
+ 
     browser.execute_script("document.querySelector('[aria-label=\"Users and messages toggle\"]').style.display='none';")
     browser.execute_script("document.querySelector('[aria-label=\"Options\"]').style.display='none';")
     browser.execute_script("document.querySelector('[aria-label=\"Actions bar\"]').style.display='none';")
@@ -112,7 +131,7 @@ def get_join_url():
     joinParams['fullName'] = args.user
     joinParams['password'] = pwd
     joinParams['userdata-bbb_auto_join_audio'] = "true" 
-    joinParams['userdata-bbb_enable_video'] = 'false' 
+    joinParams['userdata-bbb_enable_video'] = 'true' 
     joinParams['userdata-bbb_listen_only_mode'] = "true" 
     joinParams['userdata-bbb_force_listen_only'] = "true" 
     joinParams['userdata-bbb_skip_check_audio'] = 'true' 
