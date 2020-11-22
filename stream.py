@@ -17,7 +17,7 @@ from datetime import datetime
 
 downloadProcess = None
 browser = None
-selelnium_timeout = 30
+selenium_timeout = 30
 connect_timeout = 5
 
 logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
@@ -52,7 +52,7 @@ def set_up():
     options.add_argument('--kiosk') 
     options.add_argument('--window-size=1920,1080')
     options.add_argument('--window-position=0,0')
-    options.add_experimental_option("excludeSwitches", ['enable-automation']);   
+    options.add_experimental_option("excludeSwitches", ['enable-automation'])
     options.add_experimental_option('prefs', {'intl.accept_languages':'{locale}'.format(locale='en_US.UTF-8')})
     options.add_argument('--shm-size=1gb') 
     options.add_argument('--disable-dev-shm-usage') 
@@ -77,11 +77,11 @@ def bbb_browser():
     browser.get(join_url)
 
     element = EC.presence_of_element_located((By.XPATH, '//span[contains(@class,"success")]'))
-    WebDriverWait(browser, selelnium_timeout).until(element)
+    WebDriverWait(browser, selenium_timeout).until(element)
     browser.find_elements_by_xpath('//span[contains(@class,"success")]')[0].click()
 
     element = EC.invisibility_of_element((By.CSS_SELECTOR, '.ReactModal__Overlay'))
-    WebDriverWait(browser, selelnium_timeout).until(element)
+    WebDriverWait(browser, selenium_timeout).until(element)
 
     try:
         element = browser.find_element_by_id('message-input')

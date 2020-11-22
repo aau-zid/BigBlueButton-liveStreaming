@@ -11,7 +11,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 
 browser = None
-selelnium_timeout = 30
+selenium_timeout = 30
 connect_timeout = 5
 
 logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
@@ -67,11 +67,11 @@ def bbb_browser():
     browser.get(join_url)
 
     element = EC.presence_of_element_located((By.XPATH, '//span[contains(@class,"success")]'))
-    WebDriverWait(browser, selelnium_timeout).until(element)
+    WebDriverWait(browser, selenium_timeout).until(element)
     browser.find_elements_by_xpath('//span[contains(@class,"success")]')[0].click()
 
     element = EC.invisibility_of_element((By.CSS_SELECTOR, '.ReactModal__Overlay'))
-    WebDriverWait(browser, selelnium_timeout).until(element)
+    WebDriverWait(browser, selenium_timeout).until(element)
     browser.find_element_by_id('message-input').send_keys("Viewers of the live stream can now send messages to this meeting")
     browser.find_elements_by_css_selector('[aria-label="Send message"]')[0].click()
 
