@@ -1,6 +1,7 @@
 # docker build -t goldenstarc/bigbluebutton-livestreaming .
 # docker login
 # docker push goldenstarc/bigbluebutton-livestreaming
+# docker-compose up
 version: '3.3'
 services:
   bbb-streamer:
@@ -12,7 +13,7 @@ services:
       # BigBlueButton secret:
       - BBB_SECRET=1b6s1esKbXNM82ussxx8OHJTenNvfkBu59tkHHADvqk
       # BigBlueButton meetingID:
-      - BBB_MEETING_ID=bbb-live-1
+      - BBB_MEETING_ID=bbb-live-2
       # start meeting (optional):
       - BBB_START_MEETING=true
       # attendee password (optional - has to be set to the attendee password of moodle/greenlight or any other frontend to allow joining via their links):
@@ -38,8 +39,8 @@ services:
       - BBB_REDIS_CHANNEL=chat
       - BBB_CHAT_NAME=Chat
       # Media server url:
-      - BBB_STREAM_URL=rtmp://conf.legace.ir:1935/stream/bbb-live-1
-#       - BBB_STREAM_URL=rtmp://ib2.legace.ir:1936/stream/bbb-live-1
+      - BBB_STREAM_URL=rtmp://conf.legace.ir/stream/bbb-live-2
+      # - BBB_STREAM_URL=rtmp://ib2.legace.ir:1936/stream/bbb-live-1
       # Timezone (default: Europe/Vienna):
       - TZ=Iran/Tehran
     volumes:
