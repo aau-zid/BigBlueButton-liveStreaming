@@ -1,0 +1,45 @@
+# docker build -t goldenstarc/bigbluebutton-livestreaming .
+# docker login
+# docker push goldenstarc/bigbluebutton-livestreaming
+version: '3.3'
+services:
+  bbb-streamer:
+    image: golddenstarc/bigbluebutton-livestreaming
+    container_name: liveStreaming
+    environment:
+      # BigBlueButton Server url:
+      - BBB_URL=https://ib2.legace.ir/bigbluebutton/api
+      # BigBlueButton secret:
+      - BBB_SECRET=1b6s1esKbXNM82ussxx8OHJTenNvfkBu59tkHHADvqk
+      # BigBlueButton meetingID:
+      - BBB_MEETING_ID=random-1876880
+      # start meeting (optional):
+      - BBB_START_MEETING=true
+      # attendee password (optional - has to be set to the attendee password of moodle/greenlight or any other frontend to allow joining via their links):
+      - BBB_ATTENDEE_PASSWORD=ap
+      # moderator password (optional - has to be set to the moderator password of moodle/greenlight or any other frontend to allow joining via their links):
+      - BBB_MODERATOR_PASSWORD=mp
+      # meeting title (optional):
+      - BBB_MEETING_TITLE=liveStreaming Test
+      # download / save BigBlueButton meeting
+      - BBB_DOWNLOAD_MEETING=false
+      # play intro file (can be a local file in videodata folder e.g. /video/intro.mp4 or a url of a mediastream e.g. https://my.intro.stream)
+      - BBB_INTRO=false
+      # begin the intro at position (optional, e.g. 00:00:05)
+      - BBB_BEGIN_INTRO_AT=04:40
+      # end intro after (optional, e.g. 01:00:00 - after one hour)
+      - BBB_END_INTRO_AT=
+      # Live stream agent username
+      - BBB_USER_NAME=Live
+      # show or hide user chat in stream
+      - BBB_SHOW_CHAT=true
+      - BBB_ENABLE_CHAT=false
+      - BBB_REDIS_HOST=redis
+      - BBB_REDIS_CHANNEL=chat
+      - BBB_CHAT_NAME=Chat
+      # Media server url:
+      - BBB_STREAM_URL=rtmp://conf.legace.ir/stream/bigbluebutton-livestreaming
+      # Timezone (default: Europe/Vienna):
+      - TZ=Iran/Tehran
+    volumes:
+      - ./videodata:/video
