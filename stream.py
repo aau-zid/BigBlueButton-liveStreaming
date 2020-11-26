@@ -84,14 +84,15 @@ def bbb_browser():
 
     try:
         element = browser.find_element_by_id('message-input')
-        chat_send = browser.find_elements_by_css_selector('[aria-label="Send message"]')[0]
+        chat_send = browser.find_elements_by_css_selector('[aria-label="ارسال پیام"]')[0]
         # ensure chat is enabled (might be locked by moderator)
         if element.is_enabled() and chat_send.is_enabled():
-           element.send_keys("This meeting is streamed to: %s" % args.target.partition('//')[2].partition('/')[0])
+        #    element.send_keys("This meeting is streamed to: %s" % args.target.partition('//')[2].partition('/')[0])
+           element.send_keys("این جلسه درحال پخش زنده است.")
            chat_send.click()
 
         if args.chat:
-           browser.execute_script("document.querySelector('[aria-label=\"User list\"]').parentElement.style.display='none';")
+           browser.execute_script("document.querySelector('[aria-label=\"لیست کاربر\"]').parentElement.style.display='none';")
         else:
             element = browser.find_elements_by_id('chat-toggle-button')[0]
             if element.is_enabled():
@@ -102,15 +103,15 @@ def bbb_browser():
 
     if not args.chat:
         try:
-            element = browser.find_elements_by_css_selector('button[aria-label="Users and messages toggle"]')[0]
+            element = browser.find_elements_by_css_selector('button[aria-label="تغییر وضعیت نمایش کاربران و پیام ها"]')[0]
             if element.is_enabled():
                 element.click()
         except NoSuchElementException:
             logging.info("could not find users and messages toggle")
  
-    browser.execute_script("document.querySelector('[aria-label=\"Users and messages toggle\"]').style.display='none';")
-    browser.execute_script("document.querySelector('[aria-label=\"Options\"]').style.display='none';")
-    browser.execute_script("document.querySelector('[aria-label=\"Actions bar\"]').style.display='none';")
+    browser.execute_script("document.querySelector('[aria-label=\"تغییر وضعیت نمایش کاربران و پیام ها\"]').style.display='none';")
+    browser.execute_script("document.querySelector('[aria-label=\"گزینه ها\"]').style.display='none';")
+    browser.execute_script("document.querySelector('[aria-label=\"نوار فعالیت ها\"]').style.display='none';")
     browser.execute_script("document.getElementById('container').setAttribute('style','margin-bottom:30px');")
 
 def create_meeting():
