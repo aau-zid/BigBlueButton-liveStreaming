@@ -39,6 +39,7 @@ services:
       - BBB_CHAT_NAME=Chat
       # Media server url:
       - BBB_STREAM_URL=rtmp://conf.legace.ir:1935/stream/bbb-live-1
+#       - BBB_STREAM_URL=rtmp://ib2.legace.ir:1936/stream/bbb-live-1
       # Timezone (default: Europe/Vienna):
       - TZ=Iran/Tehran
     volumes:
