@@ -31,6 +31,7 @@ You need to set some environment variables to run the container.
 * BBB_END_INTRO_AT= - end intro after (optional, e.g. 01:00:00 - after one hour)
 * BBB_USER_NAME - the username to join the meeting. (Default: Live)
 * BBB_SHOW_CHAT - shows the chat on the left side of the window (Default: false)
+* BBB_RESOLUTION - the streamed/downloaded resolution (Default: 1920x1080)
 * TZ - Timezone (Default: Europe/Vienna)
 
 #### Chat settings
@@ -38,6 +39,16 @@ You need to set some environment variables to run the container.
 * BBB_REDIS_HOST - Set REDIS host (Default: redis)
 * BBB_REDIS_CHANNEL - Set REDIS channel (Default: chat)
 * BBB_CHAT_NAME - the username to join the meeting for chatting. (Default: Chat)
+
+#### Debug
+* DEBUG - settings this to non-empty value will result in more verbose output
+
+#### Advanced Usage
+* FFMPEG_STREAM_THREADS - number of threads for ffmpeg during streaming (Default: 0 (auto))
+* FFMPEG_STREAM_VIDEO_BITRATE - video bitrate (in k) (Default: 4000)
+* FFMPEG_INPUT_THREAD_QUEUE_SIZE - `thread_queue_size` option to be passed to ffmpeg (Default: 1024)
+- FFMPEG_STREAM_OPTIONS - ffmpeg options to use when streaming (bitrate/codec/...), see `stream.py` for default value
+- FFMPEG_DOWNLOAD_OPTIONS - ffmpeg options to use when downloading, see `stream.py` for default value
 
 ### Starting liveStreaming
 * wget -O docker-compose.yml https://raw.github.com/aau-zid/BigBlueButton-liveStreaming/1.0.0-beta.5/examples/docker-compose.yml.example

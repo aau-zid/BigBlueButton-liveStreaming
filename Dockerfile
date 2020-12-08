@@ -42,6 +42,7 @@ RUN apt-get update && \
     unzip chromedriver* && \
     pwd && ls
 
+ENV BBB_RESOLUTION 1920x1080
 ENV BBB_AS_MODERATOR false
 ENV BBB_USER_NAME Live
 ENV BBB_CHAT_NAME Chat

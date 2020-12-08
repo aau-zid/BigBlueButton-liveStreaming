@@ -39,7 +39,7 @@ def set_up():
     options.add_argument('--disable-infobars')
     options.add_argument('--no-sandbox')
     options.add_argument('--kiosk')
-    options.add_argument('--window-size=1920,1080')
+    options.add_argument('--window-size=1280,720')  # we do not need a big window for the chat
     options.add_argument('--window-position=0,0')
     options.add_experimental_option("excludeSwitches", ['enable-automation'])
     options.add_argument('--incognito')

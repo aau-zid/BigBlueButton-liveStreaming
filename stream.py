@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import sys, argparse, time, subprocess, shlex, logging, os
+import sys, argparse, time, subprocess, shlex, logging, os, re
 
 from bigbluebutton_api_python import BigBlueButton, exception
 from bigbluebutton_api_python import util as bbbUtil 
@@ -20,7 +20,7 @@ browser = None
 selenium_timeout = 30
 connect_timeout = 5
 
-logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
+logging.basicConfig(level=os.environ.get('LOGLEVEL', 'INFO' if not os.environ.get('DEBUG') else 'DEBUG'))
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-s","--server", help="Big Blue Button Server URL")
@@ -38,7 +38,44 @@ parser.add_argument("-T","--meetingTitle", help="meeting title (required to crea
 parser.add_argument("-u","--user", help="Name to join the meeting",default="Live")
 parser.add_argument("-t","--target", help="RTMP Streaming URL")
 parser.add_argument("-c","--chat", help="Show the chat",action="store_true")
+parser.add_argument("-r","--resolution", help="Resolution as WxH", default='1920x1080')
+parser.add_argument('--ffmpeg-stream-threads', help='Threads to use for ffmpeg streaming', type=int,
+                    default=os.environ.get('FFMPEG_STREAM_THREADS', '') or 0)
+parser.add_argument('--ffmpeg-stream-video-bitrate', help='Video birate to use for ffmpeg streaming (in k)', type=int,
+                    default=os.environ.get('FFMPEG_STREAM_VIDEO_BITRATE', '') or 4000)
+parser.add_argument(
+    '--ffmpeg-stream-options',
+    help='ffmpeg stream options (can be set using env FFMPEG_STREAM_OPTIONS)',
+    default=os.environ.get('FFMPEG_STREAM_OPTIONS', '') or '\
+        -c:a aac -b:a 160k -ar 44100 \
+        -threads "$FFMPEG_STREAM_THREADS" \
+        -c:v libx264 -x264-params "nal-hrd=cbr" -profile:v high -level:v 4.2 -vf format=yuv420p \
+        -b:v "${FFMPEG_STREAM_VIDEO_BITRATE}k" -maxrate "${FFMPEG_STREAM_VIDEO_BITRATE}k" -minrate "${FFMPEG_STREAM_VIDEO_BITRATE/2}k" -bufsize "${FFMPEG_STREAM_VIDEO_BITRATE*2}k" -g 60 \
+        -preset ultrafast \
+        ')
+parser.add_argument(
+    '--ffmpeg-download-options',
+    help='ffmpeg download options (can be set using env FFMPEG_DOWNLOAD_OPTIONS)',
+    default=os.environ.get('FFMPEG_DOWNLOAD_OPTIONS', '') or '-c:v libx264rgb -crf 0 -preset ultrafast'
+)
+parser.add_argument(
+    '--ffmpeg-input-thread-queue-size',
+    type=int,
+    help='ffmpeg thread_queue_size options to be applied to all inputs (can be set using env)',
+    default=os.environ.get('FFMPEG_INPUT_THREAD_QUEUE_SIZE', '1024')
+)
+
 args = parser.parse_args()
+# some ugly hacks for additional options
+args.ffmpeg_stream_options = args.ffmpeg_stream_options.replace(
+   '$FFMPEG_STREAM_THREADS', str(args.ffmpeg_stream_threads),
+).replace(
+   '${FFMPEG_STREAM_VIDEO_BITRATE}', str(args.ffmpeg_stream_video_bitrate),
+).replace(
+   '${FFMPEG_STREAM_VIDEO_BITRATE/2}', str(args.ffmpeg_stream_video_bitrate // 2),
+).replace(
+   '${FFMPEG_STREAM_VIDEO_BITRATE*2}', str(args.ffmpeg_stream_video_bitrate * 2),
+)
 
 bbb = BigBlueButton(args.server,args.secret)
 bbbUB = bbbUtil.UrlBuilder(args.server,args.secret)
@@ -46,11 +83,13 @@ bbbUB = bbbUtil.UrlBuilder(args.server,args.secret)
 def set_up():
     global browser
 
+    assert re.fullmatch(r'\d+x\d+', args.resolution)
+
     options = Options()  
     options.add_argument('--disable-infobars') 
     options.add_argument('--no-sandbox') 
     options.add_argument('--kiosk') 
-    options.add_argument('--window-size=1920,1080')
+    options.add_argument('--window-size=%s' % args.resolution.replace('x', ','))
     options.add_argument('--window-position=0,0')
     options.add_experimental_option("excludeSwitches", ['enable-automation'])
     options.add_experimental_option('prefs', {'intl.accept_languages':'{locale}'.format(locale='en_US.UTF-8')})
@@ -140,33 +179,33 @@ def get_join_url():
     return bbbUB.buildUrl("join", params=joinParams) 
 
 def stream_intro():
-    audio_options = '-f pulse -i default -ac 2 -c:a aac -b:a 160k -ar 44100'
-    video_options = '-c:v libx264 -x264-params "nal-hrd=cbr" -profile:v high -level:v 4.2 -vf format=yuv420p -b:v 4000k -maxrate 4000k -minrate 2000k -bufsize 8000k -g 60 -preset ultrafast'
     introBegin = ""
     if args.beginIntroAt:
         introBegin = "-ss %s"%(args.beginIntroAt)
     introEnd = ""
     if args.endIntroAt:
         introEnd = "-to %s"%(args.endIntroAt)
-    ffmpeg_stream = 'ffmpeg -re %s %s -thread_queue_size 1024 -i %s -thread_queue_size 1024 %s -threads 0 %s -f flv "%s"' % ( introBegin, introEnd, args.intro, audio_options, video_options, args.target)
+    ffmpeg_stream = 'ffmpeg -re %s %s -thread_queue_size "%s" -i %s -thread_queue_size %s -f pulse -i default -ac 2 %s -f flv "%s"' % (
+        introBegin, introEnd, args.ffmpeg_input_thread_queue_size, args.intro, args.ffmpeg_input_thread_queue_size, args.ffmpeg_stream_options, args.target
+    )
+    logging.debug('Preparing to execute %r' % ffmpeg_stream)
     ffmpeg_args = shlex.split(ffmpeg_stream)
     logging.info("streaming intro...")
     p = subprocess.call(ffmpeg_args)
 
 def stream():
-    audio_options = '-f pulse -i default -ac 2 -c:a aac -b:a 160k -ar 44100'
-    #video_options = ' -c:v libvpx-vp9 -b:v 2000k -crf 33 -quality realtime -speed 5'
-    video_options = '-c:v libx264 -x264-params "nal-hrd=cbr" -profile:v high -level:v 4.2 -vf format=yuv420p -b:v 4000k -maxrate 4000k -minrate 2000k -bufsize 8000k -g 60 -preset ultrafast -tune zerolatency'
-    ffmpeg_stream = 'ffmpeg -thread_queue_size 1024 -f x11grab -draw_mouse 0 -s 1920x1080  -i :%d -thread_queue_size 1024 %s -threads 0 %s -f flv -flvflags no_duration_filesize "%s"' % ( 122, audio_options, video_options, args.target)
+    ffmpeg_stream = 'ffmpeg -thread_queue_size "%s" -f x11grab -draw_mouse 0 -s %s  -i :%d -thread_queue_size "%s" -f pulse -i default -ac 2 %s -f flv -flvflags no_duration_filesize "%s"' % (
+        args.ffmpeg_input_thread_queue_size, args.resolution, 122, args.ffmpeg_input_thread_queue_size, args.ffmpeg_stream_options, args.target)
+    logging.debug('Preparing to execute %r' % ffmpeg_stream)
     ffmpeg_args = shlex.split(ffmpeg_stream)
     logging.info("streaming meeting...")
     p = subprocess.call(ffmpeg_args)
 
 def download():
-    downloadFile = "/video/meeting-%s.mkv" % fileTimeStamp 
-    audio_options = '-f pulse -i default -ac 2'
-    video_options = '-c:v libx264rgb -crf 0 -preset ultrafast'
-    ffmpeg_stream = 'ffmpeg -thread_queue_size 1024 -f x11grab -draw_mouse 0 -s 1920x1080  -i :%d -thread_queue_size 1024 %s %s %s' % ( 122, audio_options, video_options, downloadFile)
+    downloadFile = "/video/meeting-%s.mkv" % fileTimeStamp
+    ffmpeg_stream = 'ffmpeg -thread_queue_size "%s" -f x11grab -draw_mouse 0 -s %s  -i :%d -thread_queue_size "%s" -f pulse -i default -ac 2 %s "%s"' % (
+        args.ffmpeg_input_thread_queue_size, args.resolution, 122, args.ffmpeg_input_thread_queue_size, args.ffmpeg_download_options, downloadFile)
+    logging.debug('Preparing to execute %r' % ffmpeg_stream)
     ffmpeg_args = shlex.split(ffmpeg_stream)
     logging.info("saving meeting as %s" % downloadFile)
     return subprocess.Popen(ffmpeg_args)
