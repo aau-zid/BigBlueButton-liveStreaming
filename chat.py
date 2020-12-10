@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import sys, argparse, time, logging, os, redis
+import sys, argparse, time, subprocess, logging, os, redis
 from bigbluebutton_api_python import BigBlueButton
 from bigbluebutton_api_python import util as bbbUtil 
 from selenium import webdriver
@@ -27,6 +27,10 @@ parser.add_argument("-T","--meetingTitle", help="meeting title (required to crea
 parser.add_argument("-u","--user", help="Name to join the meeting",default="Live")
 parser.add_argument("-r","--redis", help="Redis hostname",default="redis")
 parser.add_argument("-c","--channel", help="Redis channel",default="chat")
+parser.add_argument(
+   '--browser-disable-dev-shm-usage', action='store_true', default=False,
+   help='do not use /dev/shm',
+)
 args = parser.parse_args()
 
 bbb = BigBlueButton(args.server,args.secret)
@@ -43,9 +47,13 @@ def set_up():
     options.add_argument('--window-position=0,0')
     options.add_experimental_option("excludeSwitches", ['enable-automation'])
     options.add_argument('--incognito')
-    options.add_argument('--shm-size=1gb')
-    options.add_argument('--disable-dev-shm-usage')
     options.add_argument('--start-fullscreen')
+    if args.browser_disable_dev_shm_usage:
+        options.add_argument('--disable-dev-shm-usage')
+    else:
+        dev_shm_size = int(subprocess.run('df /dev/shm/ --block-size=1M --output=size | tail -n 1', shell=True, stdout=subprocess.PIPE).stdout or '0')
+        if dev_shm_size < 256:  # 1024MB is recommended
+            logging.warning('The size of /dev/shm/ is %sMB, consider disabling dev-shm-usage or increase the size of /dev/shm', dev_shm_size)
 
     logging.info('Starting browser to chat!!')
 
