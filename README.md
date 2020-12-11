@@ -49,6 +49,8 @@ You need to set some environment variables to run the container.
 * FFMPEG_INPUT_THREAD_QUEUE_SIZE - `thread_queue_size` option to be passed to ffmpeg (Default: 1024)
 * FFMPEG_STREAM_OPTIONS - ffmpeg options to use when streaming (bitrate/codec/...), see `stream.py` for default value
 * FFMPEG_DOWNLOAD_OPTIONS - ffmpeg options to use when downloading, see `stream.py` for default value
+* BROWSER_DISABLE_DEV_SHM_USAGE - whether to disable `/dev/shm` usage of the browser (default: false),
+  for use cases where available /dev/shm is very limited, note that setting this to true can result in disk trashing
 
 ### Starting liveStreaming
 * wget -O docker-compose.yml https://raw.github.com/aau-zid/BigBlueButton-liveStreaming/1.0.0-beta.7/examples/docker-compose.yml.example

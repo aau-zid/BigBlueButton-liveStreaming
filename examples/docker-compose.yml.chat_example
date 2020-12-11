@@ -6,6 +6,7 @@ services:
      - app-tier
   bbb-streamer:
     image: aauzid/bigbluebutton-livestreaming
+    shm_size: '2gb'
     environment:
         # BigBlueButton Server url:
       - BBB_URL=https://your_BigBlueButton_server/bigbluebutton/api

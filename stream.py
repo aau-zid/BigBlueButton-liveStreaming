@@ -64,6 +64,10 @@ parser.add_argument(
     help='ffmpeg thread_queue_size options to be applied to all inputs (can be set using env)',
     default=os.environ.get('FFMPEG_INPUT_THREAD_QUEUE_SIZE', '1024')
 )
+parser.add_argument(
+   '--browser-disable-dev-shm-usage', action='store_true', default=False,
+   help='do not use /dev/shm',
+)
 
 args = parser.parse_args()
 # some ugly hacks for additional options
@@ -93,10 +97,21 @@ def set_up():
     options.add_argument('--window-position=0,0')
     options.add_experimental_option("excludeSwitches", ['enable-automation'])
     options.add_experimental_option('prefs', {'intl.accept_languages':'{locale}'.format(locale='en_US.UTF-8')})
-    options.add_argument('--shm-size=1gb') 
-    options.add_argument('--disable-dev-shm-usage') 
     options.add_argument('--start-fullscreen') 
-    
+    if args.browser_disable_dev_shm_usage:
+        options.add_argument('--disable-dev-shm-usage')
+    else:
+        dev_shm_size = int(subprocess.run('df /dev/shm/ --block-size=1M --output=size | tail -n 1', shell=True, stdout=subprocess.PIPE).stdout or '0')
+        required_dev_shm_size = 500  # in MB, 1024MB is recommended
+        if dev_shm_size < required_dev_shm_size:
+            logging.error(
+                'The size of /dev/shm/ is %sMB (minimum recommended is %sMB), '
+                'consider increasing the size of /dev/shm/ (shm-size docker parameter) or disabling /dev/shm usage '
+                '(see --browser-disable-dev-shm-usage or BROWSER_DISABLE_DEV_SHM_USAGE env variable).',
+                dev_shm_size, required_dev_shm_size
+            )
+            sys.exit(2)
+
     logging.info('Starting browser!!')
 
     browser = webdriver.Chrome(executable_path='./chromedriver',options=options)
