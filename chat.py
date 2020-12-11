@@ -52,8 +52,15 @@ def set_up():
         options.add_argument('--disable-dev-shm-usage')
     else:
         dev_shm_size = int(subprocess.run('df /dev/shm/ --block-size=1M --output=size | tail -n 1', shell=True, stdout=subprocess.PIPE).stdout or '0')
-        if dev_shm_size < 256:  # 1024MB is recommended
-            logging.warning('The size of /dev/shm/ is %sMB, consider disabling dev-shm-usage or increase the size of /dev/shm', dev_shm_size)
+        required_dev_shm_size = 500  # in MB, 1024MB is recommended
+        if dev_shm_size < required_dev_shm_size:
+            logging.error(
+                'The size of /dev/shm/ is %sMB (minimum recommended is %sMB), '
+                'consider increasing the size of /dev/shm/ (shm-size docker parameter) or disabling /dev/shm usage '
+                '(see --browser-disable-dev-shm-usage or BROWSER_DISABLE_DEV_SHM_USAGE env variable).',
+                dev_shm_size, required_dev_shm_size
+            )
+            sys.exit(2)
 
     logging.info('Starting browser to chat!!')
 
