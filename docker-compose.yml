@@ -9,7 +9,7 @@ services:
     container_name: liveStreaming
     environment:
       # BigBlueButton Server url:
-      - BBB_URL=https://ib2.legace.ir/bigbluebutton/api
+      - BBB_URL=https://ib1.vir-gol.ir/bigbluebutton/api
       # BigBlueButton secret:
       - BBB_SECRET=1b6s1esKbXNM82ussxx8OHJTenNvfkBu59tkHHADvqk
       # BigBlueButton meetingID:
@@ -39,8 +39,7 @@ services:
       - BBB_REDIS_CHANNEL=chat
       - BBB_CHAT_NAME=Chat
       # Media server url:
-      - BBB_STREAM_URL=rtmp://conf.legace.ir/stream/bbb-live-2
-      # - BBB_STREAM_URL=rtmp://ib2.legace.ir:1936/stream/bbb-live-1
+      - BBB_STREAM_URL=rtmp://live.vir-gol.ir/stream/bbb-live-1
       # Timezone (default: Europe/Vienna):
       - TZ=Iran/Tehran
     volumes:
