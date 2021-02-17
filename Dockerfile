@@ -1,3 +1,4 @@
+ARG DEF_USERID=1001
 ARG FFMPEG_VERSION=4.2.2
 
 FROM ubuntu:bionic
@@ -16,10 +17,14 @@ RUN apt-get update && apt-get install -y \
         dbus-x11 \
         libasound2 \
         libasound2-plugins\
+        libnss-wrapper \
         alsa-utils \
         alsa-oss \
         pulseaudio \
-        pulseaudio-utils 
+        pulseaudio-utils \
+    && mkdir /home/lithium \
+    && chown -R ${DEF_USERID}:0 /home/lithium
+
 
 RUN ln -s /usr/bin/python3 /usr/local/bin/python \
     && pip3 install --upgrade pip
@@ -58,7 +63,9 @@ COPY stream.py ./
 COPY chat.py ./
 COPY startStream.sh ./
 COPY docker-entrypoint.sh ./
+COPY nsswrapper.sh ./
 
 ENTRYPOINT ["sh","docker-entrypoint.sh"]
 
 CMD ["sh","startStream.sh" ]
+USER ${DEF_USERID}
