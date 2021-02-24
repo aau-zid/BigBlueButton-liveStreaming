@@ -1,5 +1,7 @@
 #!/bin/sh
 
+. /usr/src/app/nsswrapper.sh
+
 STREAM_MEETING="";
 if [ "${BBB_STREAM_URL}" != "" ]
 then

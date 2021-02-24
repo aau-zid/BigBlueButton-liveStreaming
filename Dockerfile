@@ -16,10 +16,14 @@ RUN apt-get update && apt-get install -y \
         dbus-x11 \
         libasound2 \
         libasound2-plugins\
+        libnss-wrapper \
         alsa-utils \
         alsa-oss \
         pulseaudio \
-        pulseaudio-utils 
+        pulseaudio-utils \
+    && mkdir /home/lithium /var/run/pulse /run/user/lithium \
+    && chown -R 1001:0 /home/lithium /run/user/lithium /var/run/pulse \
+    && chmod -R g=u /home/lithium /run/user/lithium /var/run/pulse
 
 RUN ln -s /usr/bin/python3 /usr/local/bin/python \
     && pip3 install --upgrade pip
@@ -58,7 +62,9 @@ COPY stream.py ./
 COPY chat.py ./
 COPY startStream.sh ./
 COPY docker-entrypoint.sh ./
+COPY nsswrapper.sh ./
 
 ENTRYPOINT ["sh","docker-entrypoint.sh"]
 
 CMD ["sh","startStream.sh" ]
+USER 1001
