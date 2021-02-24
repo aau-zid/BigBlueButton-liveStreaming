@@ -39,6 +39,7 @@ You need to set some environment variables to run the container.
 * BBB_REDIS_HOST - Set REDIS host (Default: redis)
 * BBB_REDIS_CHANNEL - Set REDIS channel (Default: chat)
 * BBB_CHAT_NAME - the username to join the meeting for chatting. (Default: Chat)
+* BBB_CHAT_STREAM_URL - The URL of the stream that should be displayed in the chat (Default: rtmp:// destination)
 
 #### Debug
 * DEBUG - settings this to non-empty value will result in more verbose output
