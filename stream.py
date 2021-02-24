@@ -143,10 +143,10 @@ def bbb_browser():
         chat_send = browser.find_elements_by_css_selector('[aria-label="Send message"]')[0]
         # ensure chat is enabled (might be locked by moderator)
         if element.is_enabled() and chat_send.is_enabled():
+           tmp_chatUrl = args.target.partition('//')[2].partition('/')[0]
            if args.chatUrl:
-               element.send_keys("This meeting is streamed to: %s" % args.chatUrl)
-           else:
-               element.send_keys("This meeting is streamed to: %s" % args.target.partition('//')[2].partition('/')[0])
+               tmp_chatUrl = args.chatUrl
+           element.send_keys("This meeting is streamed to: %s" % tmp_chatUrl)
            chat_send.click()
 
         if args.chat:
