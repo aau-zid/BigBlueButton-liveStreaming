@@ -14,6 +14,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 
 from datetime import datetime
+import time
 
 downloadProcess = None
 browser = None
@@ -159,6 +160,7 @@ def bbb_browser():
         # ignore (chat might be disabled) 
         logging.info("could not find chat input or chat toggle")
 
+    time.sleep(10)
     if not args.chat:
         try:
             element = browser.find_elements_by_css_selector('button[aria-label="Users and messages toggle"]')[0]
