@@ -14,6 +14,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 
 from datetime import datetime
+import time
 
 downloadProcess = None
 browser = None
@@ -37,6 +38,7 @@ parser.add_argument("-M","--moderatorPassword", help="moderator password (requir
 parser.add_argument("-T","--meetingTitle", help="meeting title (required to create a meeting)")
 parser.add_argument("-u","--user", help="Name to join the meeting",default="Live")
 parser.add_argument("-t","--target", help="RTMP Streaming URL")
+parser.add_argument("--chatUrl", help="Streaming URL to display in the chat", default=False)
 parser.add_argument("-c","--chat", help="Show the chat",action="store_true")
 parser.add_argument("-r","--resolution", help="Resolution as WxH", default='1920x1080')
 parser.add_argument('--ffmpeg-stream-threads', help='Threads to use for ffmpeg streaming', type=int,
@@ -142,7 +144,10 @@ def bbb_browser():
         chat_send = browser.find_elements_by_css_selector('[aria-label="Send message"]')[0]
         # ensure chat is enabled (might be locked by moderator)
         if element.is_enabled() and chat_send.is_enabled():
-           element.send_keys("This meeting is streamed to: %s" % args.target.partition('//')[2].partition('/')[0])
+           tmp_chatUrl = args.target.partition('//')[2].partition('/')[0]
+           if args.chatUrl:
+               tmp_chatUrl = args.chatUrl
+           element.send_keys("This meeting is streamed to: %s" % tmp_chatUrl)
            chat_send.click()
 
         if args.chat:
@@ -155,6 +160,7 @@ def bbb_browser():
         # ignore (chat might be disabled) 
         logging.info("could not find chat input or chat toggle")
 
+    time.sleep(10)
     if not args.chat:
         try:
             element = browser.find_elements_by_css_selector('button[aria-label="Users and messages toggle"]')[0]
