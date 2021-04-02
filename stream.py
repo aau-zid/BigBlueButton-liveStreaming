@@ -149,7 +149,7 @@ def bbb_browser():
            if args.chatUrl:
                tmp_chatUrl = args.chatUrl
            tmp_chatMsg = "This meeting is streamed to"
-           if args.chatMsg
+           if args.chatMsg:
                tmp_chatMsg = args.chatMsg
            element.send_keys("%s : %s" % tmp_chatMsg, tmp_chatUrl)
            chat_send.click()
