@@ -39,6 +39,7 @@ parser.add_argument("-T","--meetingTitle", help="meeting title (required to crea
 parser.add_argument("-u","--user", help="Name to join the meeting",default="Live")
 parser.add_argument("-t","--target", help="RTMP Streaming URL")
 parser.add_argument("--chatUrl", help="Streaming URL to display in the chat", default=False)
+parser.add_argument("--chatMsg", help="Message to display in the chat before Streaming URL", default=False)
 parser.add_argument("-c","--chat", help="Show the chat",action="store_true")
 parser.add_argument("-r","--resolution", help="Resolution as WxH", default='1920x1080')
 parser.add_argument('--ffmpeg-stream-threads', help='Threads to use for ffmpeg streaming', type=int,
@@ -147,7 +148,10 @@ def bbb_browser():
            tmp_chatUrl = args.target.partition('//')[2].partition('/')[0]
            if args.chatUrl:
                tmp_chatUrl = args.chatUrl
-           element.send_keys("This meeting is streamed to: %s" % tmp_chatUrl)
+           tmp_chatMsg = "This meeting is streamed to"
+           if args.chatMsg
+               tmp_chatMsg = args.chatMsg
+           element.send_keys("%s : %s" % tmp_chatMsg, tmp_chatUrl)
            chat_send.click()
 
         if args.chat:
