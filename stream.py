@@ -137,7 +137,7 @@ def bbb_browser():
 
     try:
         # Wait for the input element to appear
-        logger.info("Waiting for chat input window to appear.")
+        logging.info("Waiting for chat input window to appear.")
         element = EC.presence_of_element_located((By.ID, 'message-input'))
         WebDriverWait(browser, selenium_timeout).until(element)
 
