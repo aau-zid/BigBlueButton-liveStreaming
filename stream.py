@@ -101,6 +101,7 @@ def set_up():
     options.add_experimental_option("excludeSwitches", ['enable-automation'])
     options.add_experimental_option('prefs', {'intl.accept_languages':'{locale}'.format(locale='en_US.UTF-8')})
     options.add_argument('--start-fullscreen') 
+    options.add_argument('--autoplay-policy=no-user-gesture-required')
     if args.browser_disable_dev_shm_usage:
         options.add_argument('--disable-dev-shm-usage')
     else:
@@ -133,14 +134,13 @@ def bbb_browser():
     logging.info(join_url)
     browser.get(join_url)
 
-    element = EC.presence_of_element_located((By.XPATH, '//span[contains(@class,"success")]'))
-    WebDriverWait(browser, selenium_timeout).until(element)
-    browser.find_elements_by_xpath('//span[contains(@class,"success")]')[0].click()
-
-    element = EC.invisibility_of_element((By.CSS_SELECTOR, '.ReactModal__Overlay'))
-    WebDriverWait(browser, selenium_timeout).until(element)
 
     try:
+        # Wait for the input element to appear
+        logger.info("Waiting for chat input window to appear.")
+        element = EC.presence_of_element_located((By.ID, 'message-input'))
+        WebDriverWait(browser, selenium_timeout).until(element)
+
         element = browser.find_element_by_id('message-input')
         chat_send = browser.find_elements_by_css_selector('[aria-label="Send message"]')[0]
         # ensure chat is enabled (might be locked by moderator)
