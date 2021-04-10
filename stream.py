@@ -167,7 +167,7 @@ def bbb_browser():
     time.sleep(10)
     if not args.chat:
         try:
-            element = browser.find_elements_by_css_selector('button[aria-label="Users and messages toggle"]')[0]
+            element = browser.find_elements_by_css_selector('button[aria-label^="Users and messages toggle"]')[0]
             if element.is_enabled():
                 element.click()
         except NoSuchElementException:
