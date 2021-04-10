@@ -101,6 +101,7 @@ def set_up():
     options.add_experimental_option("excludeSwitches", ['enable-automation'])
     options.add_experimental_option('prefs', {'intl.accept_languages':'{locale}'.format(locale='en_US.UTF-8')})
     options.add_argument('--start-fullscreen') 
+    options.add_argument('--autoplay-policy=no-user-gesture-required')
     if args.browser_disable_dev_shm_usage:
         options.add_argument('--disable-dev-shm-usage')
     else:
@@ -135,7 +136,6 @@ def bbb_browser():
 
     element = EC.presence_of_element_located((By.XPATH, '//span[contains(@class,"success")]'))
     WebDriverWait(browser, selenium_timeout).until(element)
-    browser.find_elements_by_xpath('//span[contains(@class,"success")]')[0].click()
 
     element = EC.invisibility_of_element((By.CSS_SELECTOR, '.ReactModal__Overlay'))
     WebDriverWait(browser, selenium_timeout).until(element)
