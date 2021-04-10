@@ -173,7 +173,10 @@ def bbb_browser():
         except NoSuchElementException:
             logging.info("could not find users and messages toggle")
  
-    browser.execute_script("document.querySelector('[aria-label=\"Users and messages toggle\"]').style.display='none';")
+    try:
+        browser.execute_script("document.querySelector('[aria-label=\"Users and messages toggle\"]').style.display='none';")
+    except selenium.common.exceptions.JavascriptException:
+        browser.execute_script("document.querySelector('[aria-label=\"Users and messages toggle with new message notification\"]').style.display='none';")
     browser.execute_script("document.querySelector('[aria-label=\"Options\"]').style.display='none';")
     browser.execute_script("document.querySelector('[aria-label=\"Actions bar\"]').style.display='none';")
     browser.execute_script("document.getElementById('container').setAttribute('style','margin-bottom:30px');")
