@@ -7,6 +7,7 @@ from bigbluebutton_api_python import BigBlueButton, exception
 from bigbluebutton_api_python import util as bbbUtil 
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys  
+from selenium.common.exceptions import ElementClickInterceptedException
 from selenium.common.exceptions import JavascriptException
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.chrome.options import Options  
@@ -162,7 +163,10 @@ def bbb_browser():
             if element.is_enabled():
                 element.click()
     except NoSuchElementException:
-        # ignore (chat might be disabled) 
+        # ignore (chat might be disabled)
+        logging.info("could not find chat input or chat toggle")
+    except ElementClickInterceptedException:
+        # ignore (chat might be disabled)
         logging.info("could not find chat input or chat toggle")
 
     time.sleep(10)
