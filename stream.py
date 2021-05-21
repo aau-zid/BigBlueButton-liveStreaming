@@ -149,7 +149,7 @@ def bbb_browser():
            tmp_chatUrl = args.target.partition('//')[2].partition('/')[0]
            if args.chatUrl:
                tmp_chatUrl = args.chatUrl
-           tmp_chatMsg = "This meeting is streamed to"
+           tmp_chatMsg = os.environ.get('BBB_CHAT_MESSAGE', "This meeting is streamed to")
            if args.chatMsg:
                tmp_chatMsg = ' '.join(args.chatMsg).strip('"')
            element.send_keys("{0}: {1}".format(tmp_chatMsg, tmp_chatUrl))
