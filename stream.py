@@ -146,14 +146,15 @@ def bbb_browser():
         chat_send = browser.find_elements_by_css_selector('[aria-label="Send message"]')[0]
         # ensure chat is enabled (might be locked by moderator)
         if element.is_enabled() and chat_send.is_enabled():
-           tmp_chatUrl = args.target.partition('//')[2].partition('/')[0]
-           if args.chatUrl:
-               tmp_chatUrl = args.chatUrl
            tmp_chatMsg = os.environ.get('BBB_CHAT_MESSAGE', "This meeting is streamed to")
-           if args.chatMsg:
-               tmp_chatMsg = ' '.join(args.chatMsg).strip('"')
-           element.send_keys("{0}: {1}".format(tmp_chatMsg, tmp_chatUrl))
-           chat_send.click()
+           if not tmp_chatMsg in [ 'false', 'False', 'FALSE' ]:
+               tmp_chatUrl = args.target.partition('//')[2].partition('/')[0]
+               if args.chatUrl:
+                   tmp_chatUrl = args.chatUrl
+               if args.chatMsg:
+                   tmp_chatMsg = ' '.join(args.chatMsg).strip('"')
+               element.send_keys("{0}: {1}".format(tmp_chatMsg, tmp_chatUrl))
+               chat_send.click()
 
         if args.chat:
            browser.execute_script("document.querySelector('[aria-label=\"User list\"]').parentElement.style.display='none';")
