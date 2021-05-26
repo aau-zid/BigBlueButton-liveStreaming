@@ -83,8 +83,10 @@ def bbb_browser():
 
     time.sleep(6)
 
-    element = EC.invisibility_of_element((By.CSS_SELECTOR, '.ReactModal__Overlay'))
+    # wait for message input:
+    element = EC.presence_of_element_located((By.ID, 'message-input'))
     WebDriverWait(browser, selenium_timeout).until(element)
+
     browser.find_element_by_id('message-input').send_keys("Viewers of the live stream can now send messages to this meeting")
     browser.find_elements_by_css_selector('[aria-label="Send message"]')[0].click()
 
