@@ -29,6 +29,8 @@ services:
       - BBB_END_INTRO_AT=
       # Media server url:
       - BBB_STREAM_URL=rtmp://media_server_url/stream/stream_key
+      # Message to post in BBB Chat when joining a conference
+      - BBB_CHAT_MESSAGE=This meeting is streamed to
       # Resolution to be streamed/downloaded in format WxH (default 1920x1080)
       - BBB_RESOLUTION=1920x1080
       # stream video bitrate

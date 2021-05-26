@@ -87,8 +87,14 @@ def bbb_browser():
     element = EC.presence_of_element_located((By.ID, 'message-input'))
     WebDriverWait(browser, selenium_timeout).until(element)
 
-    browser.find_element_by_id('message-input').send_keys("Viewers of the live stream can now send messages to this meeting")
-    browser.find_elements_by_css_selector('[aria-label="Send message"]')[0].click()
+    element = browser.find_element_by_id('message-input')
+    chat_send = browser.find_elements_by_css_selector('[aria-label="Send message"]')[0]
+    # ensure chat is enabled (might be locked by moderator)
+    if element.is_enabled() and chat_send.is_enabled():
+       tmp_chatMsg = os.environ.get('BBB_CHAT_MESSAGE', "Viewers of the live stream can now send messages to this meeting")
+       if not tmp_chatMsg in [ 'false', 'False', 'FALSE' ]:
+           element.send_keys(tmp_chatMsg)
+           chat_send.click()
 
     redis_r = redis.Redis(host=args.redis,charset="utf-8", decode_responses=True)
     redis_s = redis_r.pubsub()
