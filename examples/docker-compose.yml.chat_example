@@ -21,7 +21,7 @@ services:
       # show chat in live stream
       - BBB_SHOW_CHAT=false
       # Message to post in BBB Chat when joining a conference
-      - BBB_CHAT_MESSAGE=This meeting is streamed to
+      - BBB_CHAT_MESSAGE=Viewers of the live stream can now send messages to this meeting
       # Set REDIS host (default: 'redis')
       - BBB_REDIS_HOST=redis
       # Set REDIS channel to subscribe (default: 'chat')
