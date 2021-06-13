@@ -178,6 +178,8 @@ def bbb_browser():
                 element.click()
         except NoSuchElementException:
             logging.info("could not find users and messages toggle")
+        except ElementClickInterceptedException:
+            logging.info("could not find users and messages toggle")
  
     try:
         browser.execute_script("document.querySelector('[aria-label=\"Users and messages toggle\"]').style.display='none';")
