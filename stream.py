@@ -139,48 +139,49 @@ def bbb_browser():
     try:
         # Wait for the input element to appear
         logging.info("Waiting for chat input window to appear.")
-        element = EC.presence_of_element_located((By.ID, 'message-input'))
-        WebDriverWait(browser, selenium_timeout).until(element)
+        logging.info("No need to wait. Continue jare")
+#         element = EC.presence_of_element_located((By.ID, 'message-input'))
+#         WebDriverWait(browser, selenium_timeout).until(element)
 
-        element = browser.find_element_by_id('message-input')
-        chat_send = browser.find_elements_by_css_selector('[aria-label="Send message"]')[0]
-        # ensure chat is enabled (might be locked by moderator)
-        if element.is_enabled() and chat_send.is_enabled():
-           tmp_chatUrl = args.target.partition('//')[2].partition('/')[0]
-           if args.chatUrl:
-               tmp_chatUrl = args.chatUrl
-           tmp_chatMsg = "This meeting is streamed to"
-           if args.chatMsg:
-               tmp_chatMsg = ' '.join(args.chatMsg).strip('"')
-           element.send_keys("{0}: {1}".format(tmp_chatMsg, tmp_chatUrl))
-           chat_send.click()
+#         element = browser.find_element_by_id('message-input')
+#         chat_send = browser.find_elements_by_css_selector('[aria-label="Send message"]')[0]
+#         # ensure chat is enabled (might be locked by moderator)
+#         if element.is_enabled() and chat_send.is_enabled():
+#            tmp_chatUrl = args.target.partition('//')[2].partition('/')[0]
+#            if args.chatUrl:
+#                tmp_chatUrl = args.chatUrl
+#            tmp_chatMsg = "This meeting is streamed to"
+#            if args.chatMsg:
+#                tmp_chatMsg = ' '.join(args.chatMsg).strip('"')
+#            element.send_keys("{0}: {1}".format(tmp_chatMsg, tmp_chatUrl))
+#            chat_send.click()
 
-        if args.chat:
-           browser.execute_script("document.querySelector('[aria-label=\"User list\"]').parentElement.style.display='none';")
-        else:
-            element = browser.find_elements_by_id('chat-toggle-button')[0]
-            if element.is_enabled():
-                element.click()
-    except NoSuchElementException:
-        # ignore (chat might be disabled) 
-        logging.info("could not find chat input or chat toggle")
+#         if args.chat:
+#            browser.execute_script("document.querySelector('[aria-label=\"User list\"]').parentElement.style.display='none';")
+#         else:
+#             element = browser.find_elements_by_id('chat-toggle-button')[0]
+#             if element.is_enabled():
+#                 element.click()
+#     except NoSuchElementException:
+#         # ignore (chat might be disabled) 
+#         logging.info("could not find chat input or chat toggle")
 
-    time.sleep(10)
-    if not args.chat:
-        try:
-            element = browser.find_elements_by_css_selector('button[aria-label^="Users and messages toggle"]')[0]
-            if element.is_enabled():
-                element.click()
-        except NoSuchElementException:
-            logging.info("could not find users and messages toggle")
+#     time.sleep(10)
+#     if not args.chat:
+#         try:
+#             element = browser.find_elements_by_css_selector('button[aria-label^="Users and messages toggle"]')[0]
+#             if element.is_enabled():
+#                 element.click()
+#         except NoSuchElementException:
+#             logging.info("could not find users and messages toggle")
  
-    try:
-        browser.execute_script("document.querySelector('[aria-label=\"Users and messages toggle\"]').style.display='none';")
-    except JavascriptException:
-        browser.execute_script("document.querySelector('[aria-label=\"Users and messages toggle with new message notification\"]').style.display='none';")
-    browser.execute_script("document.querySelector('[aria-label=\"Options\"]').style.display='none';")
-    browser.execute_script("document.querySelector('[aria-label=\"Actions bar\"]').style.display='none';")
-    browser.execute_script("document.getElementById('container').setAttribute('style','margin-bottom:30px');")
+#     try:
+#         browser.execute_script("document.querySelector('[aria-label=\"Users and messages toggle\"]').style.display='none';")
+#     except JavascriptException:
+#         browser.execute_script("document.querySelector('[aria-label=\"Users and messages toggle with new message notification\"]').style.display='none';")
+#     browser.execute_script("document.querySelector('[aria-label=\"Options\"]').style.display='none';")
+#     browser.execute_script("document.querySelector('[aria-label=\"Actions bar\"]').style.display='none';")
+#     browser.execute_script("document.getElementById('container').setAttribute('style','margin-bottom:30px');")
 
 def create_meeting():
     create_params = {}
