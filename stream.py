@@ -149,12 +149,17 @@ def bbb_browser():
         if element.is_enabled() and chat_send.is_enabled():
            tmp_chatMsg = os.environ.get('BBB_CHAT_MESSAGE', "This meeting is streamed to")
            if not tmp_chatMsg in [ 'false', 'False', 'FALSE' ]:
-               tmp_chatUrl = args.target.partition('//')[2].partition('/')[0]
-               if args.chatUrl:
-                   tmp_chatUrl = args.chatUrl
-               if args.chatMsg:
-                   tmp_chatMsg = ' '.join(args.chatMsg).strip('"')
-               element.send_keys("{0}: {1}".format(tmp_chatMsg, tmp_chatUrl))
+               if args.target is not None:
+                   tmp_chatUrl = args.target.partition('//')[2].partition('/')[0]
+                   if args.chatUrl:
+                       tmp_chatUrl = args.chatUrl
+                   if args.chatMsg:
+                       tmp_chatMsg = ' '.join(args.chatMsg).strip('"')
+                   element.send_keys("{0}: {1}".format(tmp_chatMsg, tmp_chatUrl))
+               else:
+                   tmp_chatMsg = "Recording in progress!"
+                   element.send_keys(tmp_chatMsg)
+               
                chat_send.click()
 
         if args.chat:
