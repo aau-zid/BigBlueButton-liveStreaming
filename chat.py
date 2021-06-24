@@ -125,7 +125,7 @@ def get_join_url():
     joinParams['fullName'] = args.user
     joinParams['password'] = pwd
     joinParams['userdata-bbb_auto_join_audio'] = "false"
-    joinParams['userdata-bbb_enable_video'] = 'false' 
+    joinParams['userdata-bbb_enable_video'] = 'true' 
     joinParams['userdata-bbb_listen_only_mode'] = "true" 
     joinParams['userdata-bbb_force_listen_only'] = "true" 
     joinParams['userdata-bbb_skip_check_audio'] = 'true' 
