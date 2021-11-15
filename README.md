@@ -33,6 +33,7 @@ You need to set some environment variables to run the container.
 * BBB_SHOW_CHAT - shows the chat on the left side of the window (Default: false)
 * BBB_RESOLUTION - the streamed/downloaded resolution (Default: 1920x1080)
 * BBB_CHAT_MESSAGE - prefix for the message that would be posted to BBB chat, while joining a conference (Default: "This meeting is streamed to")
+* BBB_CUSTOM_STYLE - Custom CSS styles that will be used when joining the BBB meeting (`userdata-bbb_custom_style` parameter)
 * TZ - Timezone (Default: Europe/Vienna)
 
 #### Chat settings

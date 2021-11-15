@@ -44,6 +44,7 @@ parser.add_argument("--chatUrl", help="Streaming URL to display in the chat", de
 parser.add_argument("--chatMsg", nargs='+', help="Message to display in the chat before Streaming URL", default=False)
 parser.add_argument("-c","--chat", help="Show the chat",action="store_true")
 parser.add_argument("-r","--resolution", help="Resolution as WxH", default='1920x1080')
+parser.add_argument("--customStyle", help="Custom css to use in Big Blue Button meeting", default="")
 parser.add_argument('--ffmpeg-stream-threads', help='Threads to use for ffmpeg streaming', type=int,
                     default=os.environ.get('FFMPEG_STREAM_THREADS', '') or 0)
 parser.add_argument('--ffmpeg-stream-video-bitrate', help='Video birate to use for ffmpeg streaming (in k)', type=int,
@@ -218,6 +219,7 @@ def get_join_url():
     joinParams['userdata-bbb_force_listen_only'] = "true" 
     joinParams['userdata-bbb_skip_check_audio'] = 'true' 
     joinParams['joinViaHtml5'] = 'true'
+    joinParams['userdata-bbb_custom_style'] = args.customStyle
     return bbbUB.buildUrl("join", params=joinParams) 
 
 def stream_intro():
