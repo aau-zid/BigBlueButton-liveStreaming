@@ -158,7 +158,10 @@ def bbb_browser():
                chat_send.click()
 
         if args.chat:
-           browser.execute_script("document.querySelector('[aria-label=\"User list\"]').parentElement.style.display='none';")
+            try:
+                browser.execute_script("document.querySelector('[aria-label=\"User list\"]').parentElement.style.display='none';")
+            except JavaScriptException:
+                browser.execute_script("document.querySelector('[aria-label=\"Users list\"]').parentElement.style.display='none';")
         else:
             element = browser.find_elements_by_id('chat-toggle-button')[0]
             if element.is_enabled():
