@@ -18,7 +18,6 @@ from selenium.webdriver.common.by import By
 from datetime import datetime
 import time
 
-downloadProcess = None
 browser = None
 selenium_timeout = 30
 connect_timeout = 5
@@ -236,21 +235,38 @@ def stream_intro():
     p = subprocess.call(ffmpeg_args)
 
 def stream():
-    ffmpeg_stream = 'ffmpeg -thread_queue_size "%s" -f x11grab -draw_mouse 0 -s %s  -i :%d -thread_queue_size "%s" -f pulse -i default -ac 2 %s -f flv -flvflags no_duration_filesize "%s"' % (
-        args.ffmpeg_input_thread_queue_size, args.resolution, 122, args.ffmpeg_input_thread_queue_size, args.ffmpeg_stream_options, args.target)
-    logging.debug('Preparing to execute %r' % ffmpeg_stream)
-    ffmpeg_args = shlex.split(ffmpeg_stream)
-    logging.info("streaming meeting...")
-    p = subprocess.call(ffmpeg_args)
+    ffmpeg_outputs = []
 
-def download():
-    downloadFile = "/video/meeting-%s.mkv" % fileTimeStamp
-    ffmpeg_stream = 'ffmpeg -thread_queue_size "%s" -f x11grab -draw_mouse 0 -s %s  -i :%d -thread_queue_size "%s" -f pulse -i default -ac 2 %s "%s"' % (
-        args.ffmpeg_input_thread_queue_size, args.resolution, 122, args.ffmpeg_input_thread_queue_size, args.ffmpeg_download_options, downloadFile)
-    logging.debug('Preparing to execute %r' % ffmpeg_stream)
-    ffmpeg_args = shlex.split(ffmpeg_stream)
-    logging.info("saving meeting as %s" % downloadFile)
-    return subprocess.Popen(ffmpeg_args)
+    if args.download:
+        downloadFile = "/video/meeting-%s.mkv" % fileTimeStamp
+        ffmpeg_outputs.extend(shlex.split(args.ffmpeg_download_options))
+        ffmpeg_outputs.append(downloadFile)
+        logging.info("saving meeting as %s" % downloadFile)
+
+    if args.stream:
+        ffmpeg_outputs.extend(shlex.split(args.ffmpeg_stream_options))
+        ffmpeg_outputs.extend([
+            "-f", "flv",
+            "-flvflags", "no_duration_filesize",
+            args.target,
+        ])
+        logging.info("streaming meeting...")
+
+    ffmpeg_cmd = [
+        "ffmpeg",
+        "-thread_queue_size", str(args.ffmpeg_input_thread_queue_size),
+        "-f", "x11grab",
+        "-draw_mouse", "0",
+        "-s", args.resolution,
+        "-i", ":122",
+        "-thread_queue_size", str(args.ffmpeg_input_thread_queue_size),
+        "-f", "pulse",
+        "-i", "default",
+        "-ac", "2",
+    ] + ffmpeg_outputs
+
+    logging.debug('Preparing to execute %r' % ffmpeg_cmd)
+    p = subprocess.call(ffmpeg_cmd)
 
 if args.startMeeting is False:
     while bbb.is_meeting_running(args.id).is_meeting_running() != True:
@@ -266,11 +282,6 @@ if args.stream and args.intro:
     stream_intro()
 if args.stream or args.download:
     bbb_browser()
-if args.download:
-    downloadProcess = download()
-if args.stream:
     stream()
-if downloadProcess:
-    downloadProcess.communicate(input=None)
 if browser:
     browser.quit()
