@@ -156,7 +156,7 @@ def bbb_browser():
                    if args.chatMsg:
                        tmp_chatMsg = ' '.join(args.chatMsg).strip('"')
                    tmp_chatMsg = "{0}: {1}".format(tmp_chatMsg, tmp_chatUrl)
-               else if tmp_chatCustomMsg != '':
+               elif tmp_chatCustomMsg != '':
                    tmp_chatMsg = tmp_chatCustomMsg
                else:
                    tmp_chatMsg = "Recording in progress!"
