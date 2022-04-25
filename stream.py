@@ -85,6 +85,11 @@ parser.add_argument(
     help='hide the annotation who is currently talking (can be set using env)',
     default=bool(strtobool(os.environ.get('BBB_HIDE_WHO_TALKS', '0')))
 )
+parser.add_argument(
+    '--bbb-background-color',
+    help='override background color by a CSS color, e.g., "black" or "#ffffff" (can be set using env)',
+    default=os.environ.get('BBB_BACKGROUND_COLOR', '')
+)
 
 args = parser.parse_args()
 # some ugly hacks for additional options
@@ -239,6 +244,9 @@ def bbb_browser():
         browser.execute_script("document.getElementById('container').setAttribute('style','margin-bottom:30px');")
     except JavascriptException:
         browser.execute_script("document.getElementById('app').setAttribute('style','margin-bottom:30px');")
+
+    if args.bbb_background_color:
+        browser.execute_script("document.querySelector('body').setAttribute('style','background-color: %s;');" % args.bbb_background_color)
 
 def create_meeting():
     create_params = {}
