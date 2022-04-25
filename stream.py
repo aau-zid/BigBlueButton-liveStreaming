@@ -191,12 +191,32 @@ def bbb_browser():
         except ElementClickInterceptedException:
             logging.info("could not find users and messages toggle")
  
-    try:
-        browser.execute_script("document.querySelector('[aria-label=\"Users and messages toggle\"]').style.display='none';")
-    except JavascriptException:
-        browser.execute_script("document.querySelector('[aria-label=\"Users and messages toggle with new message notification\"]').style.display='none';")
-    browser.execute_script("document.querySelector('[aria-label=\"Options\"]').style.display='none';")
+    # Remove everything from the top bar, except the meeting's title.
+    browser.execute_script("document.querySelector('div[class^=\"navbar\"] > div[class^=\"top\"] > div[class^=\"left\"]').style.display='none';")
+    browser.execute_script("document.querySelectorAll('div[class^=\"navbar\"] > div[class^=\"top\"] > div[class^=\"center\"] > :not(h1)').forEach((ele) => ele.style.display='none');")
+    browser.execute_script("document.querySelector('div[class^=\"navbar\"] > div[class^=\"top\"] > div[class^=\"right\"]').style.display='none';")
+
     browser.execute_script("document.querySelector('[aria-label=\"Actions bar\"]').style.display='none';")
+
+    browser.execute_script("""
+        const hideDecoratorsStyle = document.createElement("style");
+        hideDecoratorsStyle.innerText = `
+            /* Presentation hide minus button */
+            button[aria-label="Hide presentation"],
+            /* Fullscreen button, both for presentations and webcams */
+            button[aria-label^="Make "][aria-label$=" fullscreen"],
+            /* Drop down menu next to user names for webcam videos */
+            div[class^="videoCanvas"] span[class^="dropdownTrigger"]::after,
+            /* Interactive poll window */
+            div[class^="pollingContainer"],
+            /* Notification toasts */
+            div[class="Toastify"] {
+                display: none;
+            }
+        `;
+        document.head.appendChild(hideDecoratorsStyle);
+    """)
+
     try:
         browser.execute_script("document.getElementById('container').setAttribute('style','margin-bottom:30px');")
     except JavascriptException:
