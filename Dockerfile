@@ -1,14 +1,11 @@
-ARG FFMPEG_VERSION=4.2.2
-
-FROM ubuntu:bionic
-ARG FFMPEG_VERSION
+FROM ubuntu:focal
+ARG DEBIAN_FRONTEND=noninteractive
 
 WORKDIR /usr/src/app
 
-RUN apt-get update && apt-get install -y software-properties-common && apt-get update && add-apt-repository ppa:jonathonf/ffmpeg-4
-
 RUN ln -s -f /bin/true /usr/bin/chfn \
     && apt-get update && apt-get install -y \
+        python-is-python3 \
         python3-pip \
         python3-dev \
         xvfb \
@@ -26,8 +23,7 @@ RUN ln -s -f /bin/true /usr/bin/chfn \
     && chown -R 1001:0 /home/lithium /run/user/lithium /var/run/pulse \
     && chmod -R g=u /home/lithium /run/user/lithium /var/run/pulse
 
-RUN ln -s /usr/bin/python3 /usr/local/bin/python \
-    && pip3 install --upgrade pip
+RUN  pip3 install --upgrade pip
 
 COPY py_requirements.txt ./
 
