@@ -230,6 +230,8 @@ def bbb_browser():
         browser.execute_script("document.querySelector('div[class^=\"navbar\"] > div[class^=\"top\"]').style.display='none';")
     if args.bbb_hide_who_talks:
         browser.execute_script("document.querySelector('div[class^=\"navbar\"] > div[class^=\"bottom\"]').style.display='none';")
+    if args.bbb_hide_meeting_title and args.bbb_hide_who_talks:
+        browser.execute_script("document.querySelector('[class^=\"navbar\"]').style.height='0px';")
 
     browser.execute_script("document.querySelector('[aria-label=\"Actions bar\"]').style.display='none';")
 
