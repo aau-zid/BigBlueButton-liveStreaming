@@ -92,6 +92,16 @@ parser.add_argument(
     help='override background color by a CSS color, e.g., "black" or "#ffffff" (can be set using env)',
     default=os.environ.get('BBB_BACKGROUND_COLOR', '')
 )
+parser.add_argument(
+    '--logo',
+    help='add a logo to the video, passed as an image URL (can be set using env)',
+    default=os.environ.get('BBB_LOGO_URL', '')
+)
+parser.add_argument(
+    '--logo-position',
+    help='corner where to place the logo: "top/left", "top/right" (default), "bottom/left" or "bottom/right" (can be set using env)',
+    default=os.environ.get('BBB_LOGO_POS', 'top/right')
+)
 
 args = parser.parse_args()
 # some ugly hacks for additional options
@@ -241,6 +251,19 @@ def bbb_browser():
         `;
         document.head.appendChild(hideDecoratorsStyle);
     """)
+
+    if args.logo != '':
+        [logo_pos_vertical, logo_pos_horizontal] = args.logo_position.split('/')
+        browser.execute_script("""
+            const navbarHeader = document.querySelector('[class^="navbar"]');
+
+            const logoImg = document.createElement("img");
+            logoImg.style = "position: absolute; %s: 5px; %s: 5px;";
+            logoImg.src = "%s";
+            logoImg.height = 0.1 * window.innerHeight;
+
+            navbarHeader.appendChild(logoImg);
+        """ % (logo_pos_vertical, logo_pos_horizontal, args.logo))
 
     try:
         browser.execute_script("document.getElementById('container').setAttribute('style','margin-bottom:30px');")
