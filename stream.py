@@ -225,14 +225,14 @@ def bbb_browser():
             logging.info("could not find users and messages toggle")
  
     # Remove everything from the top bar, except the meeting's title.
-    browser.execute_script("document.querySelector('div[class^=\"navbar\"] > div[class^=\"top\"] > div[class^=\"left\"]').style.display='none';")
-    browser.execute_script("document.querySelectorAll('div[class^=\"navbar\"] > div[class^=\"top\"] > div[class^=\"center\"] > :not(h1)').forEach((ele) => ele.style.display='none');")
-    browser.execute_script("document.querySelector('div[class^=\"navbar\"] > div[class^=\"top\"] > div[class^=\"right\"]').style.display='none';")
+    browser.execute_script("document.querySelector('[class^=\"navbar\"] > div[class^=\"top\"] > div[class^=\"left\"]').style.display='none';")
+    browser.execute_script("document.querySelectorAll('[class^=\"navbar\"] > div[class^=\"top\"] > div[class^=\"center\"] > :not(h1)').forEach((ele) => ele.style.display='none');")
+    browser.execute_script("document.querySelector('[class^=\"navbar\"] > div[class^=\"top\"] > div[class^=\"right\"]').style.display='none';")
 
     if args.bbb_hide_meeting_title:
-        browser.execute_script("document.querySelector('div[class^=\"navbar\"] > div[class^=\"top\"]').style.display='none';")
+        browser.execute_script("document.querySelector('[class^=\"navbar\"] > div[class^=\"top\"]').style.display='none';")
     if args.bbb_hide_who_talks:
-        browser.execute_script("document.querySelector('div[class^=\"navbar\"] > div[class^=\"bottom\"]').style.display='none';")
+        browser.execute_script("document.querySelector('[class^=\"navbar\"] > div[class^=\"bottom\"]').style.display='none';")
     if args.bbb_hide_meeting_title and args.bbb_hide_who_talks:
         browser.execute_script("document.querySelector('[class^=\"navbar\"]').style.height='0px';")
 
@@ -246,7 +246,7 @@ def bbb_browser():
             /* Fullscreen button, both for presentations and webcams */
             button[aria-label^="Make "][aria-label$=" fullscreen"],
             /* Drop down menu next to user names for webcam videos */
-            div[class^="videoCanvas"] span[class^="dropdownTrigger"]::after,
+            div[class^="videoCanvas"] [class^="dropdownTrigger"]::after,
             /* Interactive poll window */
             div[class^="pollingContainer"],
             /* Notification toasts */
