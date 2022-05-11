@@ -36,8 +36,6 @@ You need to set some environment variables to run the container.
 * BBB_HIDE_MEETING_TITLE - hide the meeting title in the top bar (Default: false)
 * BBB_HIDE_WHO_TALKS - hide the annotation who is currently talking (Default: false)
 * BBB_BACKGROUND_COLOR - override background color by a CSS color, e.g., "black" or "#ffffff"
-* BBB_LOGO_URL - add a logo to the video, passed as an image URL (Default: none/disabled)
-* BBB_LOGO_POS - corner where to place the logo: "top/left", "top/right", "bottom/left" or "bottom/right" (Default "top/right")
 * TZ - Timezone (Default: Europe/Vienna)
 
 #### Chat settings
