@@ -16,7 +16,6 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 
 from datetime import datetime
-from distutils.util import strtobool
 import time
 
 browser = None
@@ -72,23 +71,6 @@ parser.add_argument(
 parser.add_argument(
    '--browser-disable-dev-shm-usage', action='store_true', default=False,
    help='do not use /dev/shm',
-)
-parser.add_argument(
-    '--bbb-hide-meeting-title',
-    type=bool,
-    help='hide the meetings title in the top bar (can be set using env)',
-    default=bool(strtobool(os.environ.get('BBB_HIDE_MEETING_TITLE', '0')))
-)
-parser.add_argument(
-    '--bbb-hide-who-talks',
-    type=bool,
-    help='hide the annotation who is currently talking (can be set using env)',
-    default=bool(strtobool(os.environ.get('BBB_HIDE_WHO_TALKS', '0')))
-)
-parser.add_argument(
-    '--bbb-background-color',
-    help='override background color by a CSS color, e.g., "black" or "#ffffff" (can be set using env)',
-    default=os.environ.get('BBB_BACKGROUND_COLOR', '')
 )
 
 args = parser.parse_args()
@@ -209,44 +191,16 @@ def bbb_browser():
         except ElementClickInterceptedException:
             logging.info("could not find users and messages toggle")
  
-    # Remove everything from the top bar, except the meeting's title.
-    browser.execute_script("document.querySelector('div[class^=\"navbar\"] > div[class^=\"top\"] > div[class^=\"left\"]').style.display='none';")
-    browser.execute_script("document.querySelectorAll('div[class^=\"navbar\"] > div[class^=\"top\"] > div[class^=\"center\"] > :not(h1)').forEach((ele) => ele.style.display='none');")
-    browser.execute_script("document.querySelector('div[class^=\"navbar\"] > div[class^=\"top\"] > div[class^=\"right\"]').style.display='none';")
-
-    if args.bbb_hide_meeting_title:
-        browser.execute_script("document.querySelector('div[class^=\"navbar\"] > div[class^=\"top\"]').style.display='none';")
-    if args.bbb_hide_who_talks:
-        browser.execute_script("document.querySelector('div[class^=\"navbar\"] > div[class^=\"bottom\"]').style.display='none';")
-
+    try:
+        browser.execute_script("document.querySelector('[aria-label=\"Users and messages toggle\"]').style.display='none';")
+    except JavascriptException:
+        browser.execute_script("document.querySelector('[aria-label=\"Users and messages toggle with new message notification\"]').style.display='none';")
+    browser.execute_script("document.querySelector('[aria-label=\"Options\"]').style.display='none';")
     browser.execute_script("document.querySelector('[aria-label=\"Actions bar\"]').style.display='none';")
-
-    browser.execute_script("""
-        const hideDecoratorsStyle = document.createElement("style");
-        hideDecoratorsStyle.innerText = `
-            /* Presentation hide minus button */
-            button[aria-label="Hide presentation"],
-            /* Fullscreen button, both for presentations and webcams */
-            button[aria-label^="Make "][aria-label$=" fullscreen"],
-            /* Drop down menu next to user names for webcam videos */
-            div[class^="videoCanvas"] span[class^="dropdownTrigger"]::after,
-            /* Interactive poll window */
-            div[class^="pollingContainer"],
-            /* Notification toasts */
-            div[class="Toastify"] {
-                display: none;
-            }
-        `;
-        document.head.appendChild(hideDecoratorsStyle);
-    """)
-
     try:
         browser.execute_script("document.getElementById('container').setAttribute('style','margin-bottom:30px');")
     except JavascriptException:
         browser.execute_script("document.getElementById('app').setAttribute('style','margin-bottom:30px');")
-
-    if args.bbb_background_color:
-        browser.execute_script("document.querySelector('body').setAttribute('style','background-color: %s;');" % args.bbb_background_color)
 
 def create_meeting():
     create_params = {}
