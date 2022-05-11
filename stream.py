@@ -6,16 +6,19 @@ import sys, argparse, time, subprocess, shlex, logging, os, re
 from bigbluebutton_api_python import BigBlueButton, exception
 from bigbluebutton_api_python import util as bbbUtil 
 from selenium import webdriver
+from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys  
 from selenium.common.exceptions import ElementClickInterceptedException
 from selenium.common.exceptions import JavascriptException
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.chrome.options import Options  
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 
 from datetime import datetime
+from distutils.util import strtobool
 import time
 
 browser = None
@@ -72,6 +75,33 @@ parser.add_argument(
    '--browser-disable-dev-shm-usage', action='store_true', default=False,
    help='do not use /dev/shm',
 )
+parser.add_argument(
+    '--bbb-hide-meeting-title',
+    type=bool,
+    help='hide the meetings title in the top bar (can be set using env)',
+    default=bool(strtobool(os.environ.get('BBB_HIDE_MEETING_TITLE', '0')))
+)
+parser.add_argument(
+    '--bbb-hide-who-talks',
+    type=bool,
+    help='hide the annotation who is currently talking (can be set using env)',
+    default=bool(strtobool(os.environ.get('BBB_HIDE_WHO_TALKS', '0')))
+)
+parser.add_argument(
+    '--bbb-background-color',
+    help='override background color by a CSS color, e.g., "black" or "#ffffff" (can be set using env)',
+    default=os.environ.get('BBB_BACKGROUND_COLOR', '')
+)
+parser.add_argument(
+    '--logo',
+    help='add a logo to the video, passed as an image URL (can be set using env)',
+    default=os.environ.get('BBB_LOGO_URL', '')
+)
+parser.add_argument(
+    '--logo-position',
+    help='corner where to place the logo: "top/left", "top/right" (default), "bottom/left" or "bottom/right" (can be set using env)',
+    default=os.environ.get('BBB_LOGO_POS', 'top/right')
+)
 
 args = parser.parse_args()
 # some ugly hacks for additional options
@@ -119,7 +149,7 @@ def set_up():
 
     logging.info('Starting browser!!')
 
-    browser = webdriver.Chrome(executable_path='./chromedriver',options=options)
+    browser = webdriver.Chrome(service=Service('./chromedriver'), options=options)
 
 def bbb_browser():
     global browser
@@ -136,14 +166,15 @@ def bbb_browser():
     browser.get(join_url)
 
 
+    time.sleep(10)
     try:
         # Wait for the input element to appear
         logging.info("Waiting for chat input window to appear.")
         element = EC.presence_of_element_located((By.ID, 'message-input'))
         WebDriverWait(browser, selenium_timeout).until(element)
 
-        element = browser.find_element_by_id('message-input')
-        chat_send = browser.find_elements_by_css_selector('[aria-label="Send message"]')[0]
+        element = browser.find_element(By.ID, 'message-input')
+        chat_send = browser.find_elements(By.CSS_SELECTOR, '[aria-label="Send message"]')[0]
         # ensure chat is enabled (might be locked by moderator)
         if element.is_enabled() and chat_send.is_enabled():
            tmp_chatMsg = os.environ.get('BBB_CHAT_MESSAGE', "This meeting is streamed to")
@@ -163,6 +194,8 @@ def bbb_browser():
                
                element.send_keys(tmp_chatMsg)
                chat_send.click()
+        else:
+            logging.info("chat is not enabled")
 
         if args.chat:
             try:
@@ -170,20 +203,20 @@ def bbb_browser():
             except JavaScriptException:
                 browser.execute_script("document.querySelector('[aria-label=\"Users list\"]').parentElement.style.display='none';")
         else:
-            element = browser.find_elements_by_id('chat-toggle-button')[0]
+            element = browser.find_elements(By.ID, 'chat-toggle-button')[0]
             if element.is_enabled():
                 element.click()
     except NoSuchElementException:
         # ignore (chat might be disabled)
-        logging.info("could not find chat input or chat toggle")
-    except ElementClickInterceptedException:
+        logging.warn("could not find chat input or chat toggle")
+    except ElementClickInterceptedException as e:
         # ignore (chat might be disabled)
-        logging.info("could not find chat input or chat toggle")
+        logging.warn("could not find chat input or chat toggle")
+        logging.warn(e, exc_info=True)
 
-    time.sleep(10)
     if not args.chat:
         try:
-            element = browser.find_elements_by_css_selector('button[aria-label^="Users and messages toggle"]')[0]
+            element = browser.find_elements(By.CSS_SELECTOR, 'button[aria-label^="Users and messages toggle"]')[0]
             if element.is_enabled():
                 element.click()
         except NoSuchElementException:
@@ -191,16 +224,59 @@ def bbb_browser():
         except ElementClickInterceptedException:
             logging.info("could not find users and messages toggle")
  
-    try:
-        browser.execute_script("document.querySelector('[aria-label=\"Users and messages toggle\"]').style.display='none';")
-    except JavascriptException:
-        browser.execute_script("document.querySelector('[aria-label=\"Users and messages toggle with new message notification\"]').style.display='none';")
-    browser.execute_script("document.querySelector('[aria-label=\"Options\"]').style.display='none';")
+    # Remove everything from the top bar, except the meeting's title.
+    browser.execute_script("document.querySelector('[class^=\"navbar\"] > div[class^=\"top\"] > div[class^=\"left\"]').style.display='none';")
+    browser.execute_script("document.querySelectorAll('[class^=\"navbar\"] > div[class^=\"top\"] > div[class^=\"center\"] > :not(h1)').forEach((ele) => ele.style.display='none');")
+    browser.execute_script("document.querySelector('[class^=\"navbar\"] > div[class^=\"top\"] > div[class^=\"right\"]').style.display='none';")
+
+    if args.bbb_hide_meeting_title:
+        browser.execute_script("document.querySelector('[class^=\"navbar\"] > div[class^=\"top\"]').style.display='none';")
+    if args.bbb_hide_who_talks:
+        browser.execute_script("document.querySelector('[class^=\"navbar\"] > div[class^=\"bottom\"]').style.display='none';")
+    if args.bbb_hide_meeting_title and args.bbb_hide_who_talks:
+        browser.execute_script("document.querySelector('[class^=\"navbar\"]').style.height='0px';")
+
     browser.execute_script("document.querySelector('[aria-label=\"Actions bar\"]').style.display='none';")
+
+    browser.execute_script("""
+        const hideDecoratorsStyle = document.createElement("style");
+        hideDecoratorsStyle.innerText = `
+            /* Presentation hide minus button */
+            button[aria-label="Hide presentation"],
+            /* Fullscreen button, both for presentations and webcams */
+            button[aria-label^="Make "][aria-label$=" fullscreen"],
+            /* Drop down menu next to user names for webcam videos */
+            div[class^="videoCanvas"] [class^="dropdownTrigger"]::after,
+            /* Interactive poll window */
+            div[class^="pollingContainer"],
+            /* Notification toasts */
+            div[class="Toastify"] {
+                display: none;
+            }
+        `;
+        document.head.appendChild(hideDecoratorsStyle);
+    """)
+
+    if args.logo != '':
+        [logo_pos_vertical, logo_pos_horizontal] = args.logo_position.split('/')
+        browser.execute_script("""
+            const navbarHeader = document.querySelector('[class^="navbar"]');
+
+            const logoImg = document.createElement("img");
+            logoImg.style = "position: absolute; %s: 5px; %s: 5px;";
+            logoImg.src = "%s";
+            logoImg.height = 0.1 * window.innerHeight;
+
+            navbarHeader.appendChild(logoImg);
+        """ % (logo_pos_vertical, logo_pos_horizontal, args.logo))
+
     try:
         browser.execute_script("document.getElementById('container').setAttribute('style','margin-bottom:30px');")
     except JavascriptException:
         browser.execute_script("document.getElementById('app').setAttribute('style','margin-bottom:30px');")
+
+    if args.bbb_background_color:
+        browser.execute_script("document.querySelector('body').setAttribute('style','background-color: %s;');" % args.bbb_background_color)
 
 def create_meeting():
     create_params = {}
