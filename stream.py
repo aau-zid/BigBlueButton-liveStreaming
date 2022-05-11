@@ -6,13 +6,11 @@ import sys, argparse, time, subprocess, shlex, logging, os, re
 from bigbluebutton_api_python import BigBlueButton, exception
 from bigbluebutton_api_python import util as bbbUtil 
 from selenium import webdriver
-from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys  
 from selenium.common.exceptions import ElementClickInterceptedException
 from selenium.common.exceptions import JavascriptException
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.chrome.options import Options  
-from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
@@ -149,7 +147,7 @@ def set_up():
 
     logging.info('Starting browser!!')
 
-    browser = webdriver.Chrome(service=Service('./chromedriver'), options=options)
+    browser = webdriver.Chrome(executable_path='./chromedriver',options=options)
 
 def bbb_browser():
     global browser
@@ -172,8 +170,8 @@ def bbb_browser():
         element = EC.presence_of_element_located((By.ID, 'message-input'))
         WebDriverWait(browser, selenium_timeout).until(element)
 
-        element = browser.find_element(By.ID, 'message-input')
-        chat_send = browser.find_elements(By.CSS_SELECTOR, '[aria-label="Send message"]')[0]
+        element = browser.find_element_by_id('message-input')
+        chat_send = browser.find_elements_by_css_selector('[aria-label="Send message"]')[0]
         # ensure chat is enabled (might be locked by moderator)
         if element.is_enabled() and chat_send.is_enabled():
            tmp_chatMsg = os.environ.get('BBB_CHAT_MESSAGE', "This meeting is streamed to")
@@ -200,7 +198,7 @@ def bbb_browser():
             except JavaScriptException:
                 browser.execute_script("document.querySelector('[aria-label=\"Users list\"]').parentElement.style.display='none';")
         else:
-            element = browser.find_elements(By.ID, 'chat-toggle-button')[0]
+            element = browser.find_elements_by_id('chat-toggle-button')[0]
             if element.is_enabled():
                 element.click()
     except NoSuchElementException:
@@ -213,7 +211,7 @@ def bbb_browser():
     time.sleep(10)
     if not args.chat:
         try:
-            element = browser.find_elements(By.CSS_SELECTOR, 'button[aria-label^="Users and messages toggle"]')[0]
+            element = browser.find_elements_by_css_selector('button[aria-label^="Users and messages toggle"]')[0]
             if element.is_enabled():
                 element.click()
         except NoSuchElementException:
