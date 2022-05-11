@@ -166,6 +166,7 @@ def bbb_browser():
     browser.get(join_url)
 
 
+    time.sleep(10)
     try:
         # Wait for the input element to appear
         logging.info("Waiting for chat input window to appear.")
@@ -193,6 +194,8 @@ def bbb_browser():
                
                element.send_keys(tmp_chatMsg)
                chat_send.click()
+        else:
+            logging.info("chat is not enabled")
 
         if args.chat:
             try:
@@ -205,12 +208,12 @@ def bbb_browser():
                 element.click()
     except NoSuchElementException:
         # ignore (chat might be disabled)
-        logging.info("could not find chat input or chat toggle")
-    except ElementClickInterceptedException:
+        logging.warn("could not find chat input or chat toggle")
+    except ElementClickInterceptedException as e:
         # ignore (chat might be disabled)
-        logging.info("could not find chat input or chat toggle")
+        logging.warn("could not find chat input or chat toggle")
+        logging.warn(e, exc_info=True)
 
-    time.sleep(10)
     if not args.chat:
         try:
             element = browser.find_elements(By.CSS_SELECTOR, 'button[aria-label^="Users and messages toggle"]')[0]
