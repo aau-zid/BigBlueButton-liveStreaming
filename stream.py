@@ -162,9 +162,9 @@ def bbb_browser():
 #             element = browser.find_elements_by_id('chat-toggle-button')[0]
 #             if element.is_enabled():
 #                 element.click()
-#     except NoSuchElementException:
-#         # ignore (chat might be disabled) 
-#         logging.info("could not find chat input or chat toggle")
+    except NoSuchElementException:
+        # ignore (chat might be disabled) 
+        logging.info("could not find chat input or chat toggle")
 
 #     time.sleep(10)
 #     if not args.chat:
